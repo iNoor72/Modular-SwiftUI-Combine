@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		87341F7B2CF4A1ED004B6835 /* CachingLayer in Frameworks */ = {isa = PBXBuildFile; productRef = 87341F7A2CF4A1ED004B6835 /* CachingLayer */; };
+		87341F7D2CF4A1ED004B6835 /* NetworkLayer in Frameworks */ = {isa = PBXBuildFile; productRef = 87341F7C2CF4A1ED004B6835 /* NetworkLayer */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		87341F092CF494B3004B6835 /* Movies-SwiftUI-Combine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movies-SwiftUI-Combine.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -15,6 +20,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				Modules/CachingLayer,
+				Modules/NetworkLayer,
 			);
 			target = 87341F082CF494B3004B6835 /* Movies-SwiftUI-Combine */;
 		};
@@ -36,6 +43,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87341F7B2CF4A1ED004B6835 /* CachingLayer in Frameworks */,
+				87341F7D2CF4A1ED004B6835 /* NetworkLayer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +55,7 @@
 			isa = PBXGroup;
 			children = (
 				87341F0B2CF494B3004B6835 /* Movies-SwiftUI-Combine */,
+				87341F3C2CF499B5004B6835 /* Frameworks */,
 				87341F0A2CF494B3004B6835 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +66,13 @@
 				87341F092CF494B3004B6835 /* Movies-SwiftUI-Combine.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		87341F3C2CF499B5004B6835 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -78,6 +95,8 @@
 			);
 			name = "Movies-SwiftUI-Combine";
 			packageProductDependencies = (
+				87341F7A2CF4A1ED004B6835 /* CachingLayer */,
+				87341F7C2CF4A1ED004B6835 /* NetworkLayer */,
 			);
 			productName = "Movies-SwiftUI-Combine";
 			productReference = 87341F092CF494B3004B6835 /* Movies-SwiftUI-Combine.app */;
@@ -107,6 +126,8 @@
 			);
 			mainGroup = 87341F002CF494B3004B6835;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 87341F0A2CF494B3004B6835 /* Products */;
 			projectDirPath = "";
@@ -150,9 +171,10 @@
 				INFOPLIST_FILE = "Movies-SwiftUI-Combine/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIMainStoryboardFile = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -178,9 +200,10 @@
 				INFOPLIST_FILE = "Movies-SwiftUI-Combine/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIMainStoryboardFile = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -196,6 +219,8 @@
 		};
 		87341F1F2CF494B5004B6835 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 87341F0B2CF494B3004B6835 /* Movies-SwiftUI-Combine */;
+			baseConfigurationReferenceRelativePath = Configurations/Configuration.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -259,6 +284,8 @@
 		};
 		87341F202CF494B5004B6835 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 87341F0B2CF494B3004B6835 /* Movies-SwiftUI-Combine */;
+			baseConfigurationReferenceRelativePath = Configurations/Configuration.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -335,6 +362,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		87341F7A2CF4A1ED004B6835 /* CachingLayer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CachingLayer;
+		};
+		87341F7C2CF4A1ED004B6835 /* NetworkLayer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetworkLayer;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 87341F012CF494B3004B6835 /* Project object */;
 }
