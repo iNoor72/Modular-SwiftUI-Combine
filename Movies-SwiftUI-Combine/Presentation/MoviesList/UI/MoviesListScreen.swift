@@ -10,6 +10,10 @@ import SwiftUI
 struct MoviesListScreen: View {
     @ObservedObject var viewModel: MoviesListViewModel
     
+    private enum Constants {
+        static let contentSpacing: CGFloat = 16
+    }
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             mainView
@@ -41,24 +45,32 @@ struct MoviesListScreen: View {
 extension MoviesListScreen {
     @ViewBuilder
     private var contentView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: Constants.contentSpacing) {
             searchBar
-            filtersView
+            genresView
             moviesListView
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, Constants.contentSpacing)
     }
     
     private var searchBar: some View {
-        EmptyView()
+        SearchBarView(query: $viewModel.searchQuery)
+            .padding(.horizontal, Constants.contentSpacing)
     }
     
-    private var filtersView: some View {
-        EmptyView()
+    private var genresView: some View {
+        GenresFilterView(genres: viewModel.genres, didSelectGenreAction: viewModel.didSelectGenreAction)
     }
     
     private var moviesListView: some View {
-        EmptyView()
+        ScrollView(.vertical) {
+            LazyVStack {
+                ForEach(viewModel.movies, id: \.id) {
+                    MovieItemView(movieItem: $0)
+                }
+            }
+        }
+        .padding(.horizontal, Constants.contentSpacing)
     }
 }
 

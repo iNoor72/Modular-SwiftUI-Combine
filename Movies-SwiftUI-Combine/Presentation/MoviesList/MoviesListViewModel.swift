@@ -18,6 +18,8 @@ enum MoviesListScreenState {
 final class MoviesListViewModel: ObservableObject {
     @Published var state: MoviesListScreenState = .initial
     @Published var movies: [Movie] = []
+    @Published var genres: [Genre] = []
+    @Published var searchQuery: String = ""
     
     private let genresUseCase: GenresUseCase
     private let trendingMoviesUseCase: TrendingMoviesUseCase
@@ -31,6 +33,10 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     func onAppear() {
+        
+    }
+    
+    func didSelectGenreAction() {
         
     }
 }
