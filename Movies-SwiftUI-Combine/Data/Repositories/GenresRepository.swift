@@ -6,7 +6,26 @@
 //
 
 import Foundation
+import NetworkLayer
+import Combine
 
 final class GenresRepository: GenresRepositoryProtocol {
+    private let network: NetworkServiceProtocol
     
+    init(network: NetworkServiceProtocol) {
+        self.network = network
+    }
+    
+    func fetchGenres() -> AnyPublisher<[GenreItem], NetworkError> {
+        do {
+            let endpoint = GenresEndpoint.genres
+            return try network
+                .fetch(endpoint: endpoint, expectedType: [GenreItem].self)
+                .eraseToAnyPublisher()
+        } catch {
+            return Future<[GenreItem], NetworkError> { promise in
+                promise(.failure(NetworkError.decodingError))
+            }.eraseToAnyPublisher()
+        }
+    }
 }

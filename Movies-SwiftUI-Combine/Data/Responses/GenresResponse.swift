@@ -6,3 +6,13 @@
 //
 
 import Foundation
+
+public struct GenresResponse: Codable {
+    public let genres: [GenreItem]
+}
+
+public struct GenreItem: Codable, Hashable, Identifiable {
+    public let id: Int
+    public let name: String
+    public var isSelected: Bool = false
+}

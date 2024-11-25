@@ -7,11 +7,15 @@
 
 import Foundation
 
-struct MoviesResponse: Codable {
-    
+public struct MoviesResponse: Codable {
+    public let results: [MoviesResponseItem]?
     
     
     func toDataModel() -> DataModel? {
         return nil
     }
+}
+
+public struct MoviesResponseItem: Codable, Hashable, Identifiable {
+    public let id: Int
 }

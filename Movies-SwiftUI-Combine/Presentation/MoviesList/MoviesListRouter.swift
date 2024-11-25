@@ -13,7 +13,7 @@ protocol MoviesListRouterProtocol {
 }
 
 enum MoviesListDestination {
-    case movieDetails(Movie)
+    case movieDetails(MovieModel)
 }
 
 final class MoviesListRouter: MoviesListRouterProtocol {
@@ -28,7 +28,7 @@ final class MoviesListRouter: MoviesListRouterProtocol {
 }
 
 extension MoviesListRouter {
-    private func navigateToMovieDetails(_ movie: Movie) {
+    private func navigateToMovieDetails(_ movie: MovieModel) {
         let movieDetailsFactory = MovieDetailsFactory()
         let movieDetailsView = movieDetailsFactory.make(with: 0)
         viewController?.navigationController?.pushViewController(movieDetailsView, animated: true)

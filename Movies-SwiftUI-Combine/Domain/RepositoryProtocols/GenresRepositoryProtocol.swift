@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import NetworkLayer
+import Combine
 
 protocol GenresRepositoryProtocol {
-    
+    func fetchGenres() -> AnyPublisher<[GenreItem], NetworkError>
 }

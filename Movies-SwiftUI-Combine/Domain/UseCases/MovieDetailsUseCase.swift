@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol MovieDetailsUseCase {
-//    func fetchMovieDetails(with movieId: Int) -> AnyPublisher<MovieDetails, Error>
+//    func fetchMovieDetails(with movieId: Int) -> AnyPublisher<MovieDetails, NetworkManager>
 }
 
 public final class MovieDetailsUseCaseImpl: MovieDetailsUseCase {

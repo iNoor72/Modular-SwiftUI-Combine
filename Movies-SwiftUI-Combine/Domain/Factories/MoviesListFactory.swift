@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import NetworkLayer
 
 protocol MoviesListFactoryProtocol {
     func make() -> UIViewController
@@ -14,8 +15,8 @@ protocol MoviesListFactoryProtocol {
 
 final class MoviesListFactory: MoviesListFactoryProtocol {
     func make() -> UIViewController {
-        let genresRepository = GenresRepository()
-        let moviesListRepository = MoviesListRepository()
+        let genresRepository = GenresRepository(network: NetworkManager.shared)
+        let moviesListRepository = MoviesListRepository(network: NetworkManager.shared)
         
         let genresUseCase = GenresUseCaseImpl(genreRepository: genresRepository)
         let trendingMoviesUseCase = TrendingMoviesUseCaseImpl(moviesListRepository: moviesListRepository)

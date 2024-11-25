@@ -60,13 +60,14 @@ extension MoviesListScreen {
     
     private var genresView: some View {
         GenresFilterView(genres: viewModel.genres, didSelectGenreAction: viewModel.didSelectGenreAction)
+            .padding(.horizontal, Constants.contentSpacing)
     }
     
     private var moviesListView: some View {
         ScrollView(.vertical) {
             LazyVStack {
                 ForEach(viewModel.movies, id: \.id) {
-                    MovieItemView(movieItem: $0)
+                    MovieCardView(movieItem: $0)
                 }
             }
         }

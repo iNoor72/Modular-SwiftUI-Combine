@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import Combine
+import NetworkLayer
 
 protocol MoviesListRepositoryProtocol {
-    
+    func fetchMovies(with page: Int, genreIDs: [Int]) -> AnyPublisher<[MoviesResponseItem], NetworkError>
 }

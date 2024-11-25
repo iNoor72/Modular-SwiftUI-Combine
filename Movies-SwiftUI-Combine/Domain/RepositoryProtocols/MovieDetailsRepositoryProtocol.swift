@@ -8,5 +8,5 @@
 import Foundation
 
 protocol MovieDetailsRepositoryProtocol {
-    
+//    func fetchMovieDetails(with movieId: Int) -> AnyPublisher<MovieDetails, NetworkManager>
 }

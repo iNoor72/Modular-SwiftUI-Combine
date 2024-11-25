@@ -9,13 +9,10 @@ import Foundation
 import NetworkLayer
 
 public enum MoviesEndpoint: Endpoint {
-    case genres
-    case trending(page: Int)
+    case trending(page: Int, genreIDs: [Int])
     
     public var path: String {
         switch self {
-        case .genres:
-            return "/genre/movie/list"
         case .trending:
             return "/discover/movie"
         }
@@ -25,16 +22,15 @@ public enum MoviesEndpoint: Endpoint {
         return .get
     }
     
-    public var queryParams: [String : String]? {
+    public var queryParams: [String: String]? {
         switch self {
-        case .trending(let page):
+        case .trending(let page, let genres):
             return [
-                "include_adult" : 0.description,
-                "sort_by" : "popularity.desc",
-                "page" : page.description
+                "include_adult": 0.description,
+                "sort_by": "popularity.desc",
+                "page": page.description,
+//                "with_genres": genres.map { $0.description }.joined(separator: ",")
             ]
-        default:
-            return nil
         }
     }
 }

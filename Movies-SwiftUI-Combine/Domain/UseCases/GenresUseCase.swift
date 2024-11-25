@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import Combine
+import NetworkLayer
 
 public protocol GenresUseCase {
-//    func fetchGenres() -> AnyPublisher<[Genre], Error>
+    func execute() -> AnyPublisher<[GenreItem], NetworkError>
 }
 
 public final class GenresUseCaseImpl: GenresUseCase {
@@ -18,13 +20,15 @@ public final class GenresUseCaseImpl: GenresUseCase {
         self.genreRepository = genreRepository
     }
     
-//    func fetchGenres() -> AnyPublisher<[Genre], Error> {
-//        
-//    }
+    public func execute() -> AnyPublisher<[GenreItem], NetworkError> {
+        genreRepository.fetchGenres()
+    }
 }
 
 public final class GenresUseCaseMock: GenresUseCase {
-//    func fetchGenres() -> AnyPublisher<[Genre], Error> {
-//        
-//    }
+    public func execute() -> AnyPublisher<[GenreItem], NetworkError> {
+        Future<[GenreItem], NetworkError> { promise in
+            promise(.success([GenreItem(id: 1, name: "Test")]))
+        }.eraseToAnyPublisher()
+    }
 }

@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct GenresFilterItem: View {
-    var genre: Genre
-    var didSelectGenreAction: (() -> ())?
+    var genre: GenreItem
+    var didSelectGenreAction: ((GenreItem) -> ())?
     
     var body: some View {
-        Text(genre.title)
+        Text(genre.name)
             .padding()
             .frame(height: 40)
             .onTapGesture {
-                didSelectGenreAction?()
+                didSelectGenreAction?(genre)
             }
             .padding(.horizontal, 10)
             .background {

@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import Combine
+import NetworkLayer
 
 public protocol TrendingMoviesUseCase {
-//    func fetchTrendingMovies() -> AnyPublisher<[Movie], Error>
+    func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<[MoviesResponseItem], NetworkError>
 }
 
 public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
@@ -18,13 +20,15 @@ public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
         self.moviesListRepository = moviesListRepository
     }
     
-//    func fetchTrendingMovies() -> AnyPublisher<[Movie], Error> {
-//        
-//    }
+    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<[MoviesResponseItem], NetworkError> {
+        moviesListRepository.fetchMovies(with: page, genreIDs: genres.map { $0.id })
+    }
 }
 
 public final class TrendingMoviesUseCaseMock: TrendingMoviesUseCase {
-//    func fetchTrendingMovies() -> AnyPublisher<[Movie], Error> {
-//        
-//    }
+    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<[MoviesResponseItem], NetworkError> {
+        Future<[MoviesResponseItem], NetworkError> { promise in
+            promise(.success([MoviesResponseItem(id: 1)]))
+        }.eraseToAnyPublisher()
+    }
 }
