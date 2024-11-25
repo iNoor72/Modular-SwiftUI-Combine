@@ -16,7 +16,7 @@ enum MoviesListScreenState {
 }
 
 final class MoviesListViewModel: ObservableObject {
-    @Published var state: MoviesListScreenState = .initial
+    @Published var state: MoviesListScreenState = .success
     @Published var movies: [Movie] = []
     @Published var genres: [Genre] = []
     @Published var searchQuery: String = ""
