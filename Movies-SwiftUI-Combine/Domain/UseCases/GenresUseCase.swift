@@ -28,7 +28,7 @@ public final class GenresUseCaseImpl: GenresUseCase {
 public final class GenresUseCaseMock: GenresUseCase {
     public func execute() -> AnyPublisher<GenresResponse, NetworkError> {
         Future<GenresResponse, NetworkError> { promise in
-            promise(.success(GenresResponse(genres: [])))
+            promise(.success(GenresResponse.dummyData))
         }.eraseToAnyPublisher()
     }
 }

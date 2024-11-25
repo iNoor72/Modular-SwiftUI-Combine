@@ -28,7 +28,7 @@ public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
 public final class TrendingMoviesUseCaseMock: TrendingMoviesUseCase {
     public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<MoviesResponse, NetworkError> {
         Future<MoviesResponse, NetworkError> { promise in
-            promise(.success(MoviesResponse(results: [])))
+            promise(.success(MoviesResponse.dummyData))
         }.eraseToAnyPublisher()
     }
 }

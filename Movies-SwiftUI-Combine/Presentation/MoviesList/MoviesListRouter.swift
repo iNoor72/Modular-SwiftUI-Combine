@@ -30,7 +30,7 @@ final class MoviesListRouter: MoviesListRouterProtocol {
 extension MoviesListRouter {
     private func navigateToMovieDetails(_ movie: MoviesResponseItem) {
         let movieDetailsFactory = MovieDetailsFactory()
-        let movieDetailsView = movieDetailsFactory.make(with: 0)
+        let movieDetailsView = movieDetailsFactory.make(with: movie.id ?? 0)
         viewController?.navigationController?.pushViewController(movieDetailsView, animated: true)
     }
 }

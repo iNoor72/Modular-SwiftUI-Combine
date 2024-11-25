@@ -66,7 +66,9 @@ extension MoviesListScreen {
     }
     
     private var moviesListView: some View {
-        MoviesListScrollView(movies: viewModel.movies)
+        MoviesListScrollView(movies: viewModel.movies) { movie in
+            viewModel.handle(.navigateToDetails(movie))
+        }
             .padding(.horizontal, Constants.contentSpacing)
     }
 }

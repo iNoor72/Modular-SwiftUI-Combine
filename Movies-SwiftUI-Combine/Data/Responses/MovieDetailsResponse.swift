@@ -18,6 +18,8 @@ public struct MovieDetailsResponse: Codable {
     public let status: String?
     public let runtime: Int?
     public let genres: [GenreItem]?
+    
+    static let dummyData = MovieDetailsResponse(id: nil, budget: nil, posterPath: nil, backdropPath: nil, overview: nil, homepage: nil, spokenLanguages: nil, status: nil, runtime: nil, genres: nil)
 }
 
 public struct SpokenLanguageItem: Codable {

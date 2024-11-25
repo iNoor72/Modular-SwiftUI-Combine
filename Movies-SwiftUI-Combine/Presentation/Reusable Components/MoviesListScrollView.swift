@@ -13,12 +13,16 @@ struct MoviesListScrollView: View {
         GridItem(.flexible())
     ]
     let movies: [MoviesResponseItem]
+    let onItemClick: (MoviesResponseItem) -> Void
     
     var body: some View {
         ScrollView(.vertical) {
             LazyVGrid(columns: columns) {
-                ForEach(movies, id: \.id) {
-                    MovieCardView(movieItem: $0)
+                ForEach(movies, id: \.id) { movie in
+                    MovieCardView(movieItem: movie)
+                        .onTapGesture {
+                            onItemClick(movie)
+                        }
                 }
             }
         }

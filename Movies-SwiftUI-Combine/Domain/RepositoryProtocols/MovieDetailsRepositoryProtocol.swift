@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import Combine
+import NetworkLayer
 
 protocol MovieDetailsRepositoryProtocol {
-//    func fetchMovieDetails(with movieId: Int) -> AnyPublisher<MovieDetails, NetworkManager>
+    func fetchMovieDetails(with movieId: Int) -> AnyPublisher<MovieDetailsResponse, NetworkError>
 }

@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import Combine
+import NetworkLayer
 
 public protocol MovieDetailsUseCase {
-//    func fetchMovieDetails(with movieId: Int) -> AnyPublisher<MovieDetails, NetworkManager>
+    func execute(with movieId: Int) -> AnyPublisher<MovieDetailsResponse, NetworkError>
 }
 
 public final class MovieDetailsUseCaseImpl: MovieDetailsUseCase {
@@ -17,13 +19,16 @@ public final class MovieDetailsUseCaseImpl: MovieDetailsUseCase {
     init(movieDetailsRepository: MovieDetailsRepositoryProtocol) {
         self.movieDetailsRepository = movieDetailsRepository
     }
-//    func fetchMovieDetails(with movieId: Int) -> AnyPublisher<MovieDetails, Error> {
-//        
-//    }
+    
+    public func execute(with movieId: Int) -> AnyPublisher<MovieDetailsResponse, NetworkError> {
+        movieDetailsRepository.fetchMovieDetails(with: movieId)
+    }
 }
 
 public final class MovieDetailsUseCaseMock: MovieDetailsUseCase {
-//    func fetchMovieDetails(with movieId: Int) -> AnyPublisher<MovieDetails, Error> {
-//        return Just(MovieDetailsMockModel())
-//    }
+    public func execute(with movieId: Int) -> AnyPublisher<MovieDetailsResponse, NetworkError> {
+        Future<MovieDetailsResponse, NetworkError> { promise in
+            promise(.success(MovieDetailsResponse.dummyData))
+        }.eraseToAnyPublisher()
+    }
 }

@@ -9,6 +9,8 @@ import Foundation
 
 public struct GenresResponse: Codable {
     public let genres: [GenreItem]?
+    
+    static let dummyData = GenresResponse(genres: [])
 }
 
 public struct GenreItem: Codable, Hashable, Identifiable {
