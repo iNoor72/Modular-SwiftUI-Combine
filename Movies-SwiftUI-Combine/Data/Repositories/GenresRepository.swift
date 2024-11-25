@@ -16,14 +16,14 @@ final class GenresRepository: GenresRepositoryProtocol {
         self.network = network
     }
     
-    func fetchGenres() -> AnyPublisher<[GenreItem], NetworkError> {
+    func fetchGenres() -> AnyPublisher<GenresResponse, NetworkError> {
         do {
             let endpoint = GenresEndpoint.genres
             return try network
-                .fetch(endpoint: endpoint, expectedType: [GenreItem].self)
+                .fetch(endpoint: endpoint, expectedType: GenresResponse.self)
                 .eraseToAnyPublisher()
         } catch {
-            return Future<[GenreItem], NetworkError> { promise in
+            return Future<GenresResponse, NetworkError> { promise in
                 promise(.failure(NetworkError.decodingError))
             }.eraseToAnyPublisher()
         }

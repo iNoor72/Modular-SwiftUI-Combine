@@ -8,6 +8,6 @@
 import Foundation
 
 public enum AppConfiguration {
-    static let baseURL = Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as? String ?? ""
-    static let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? ""
+    public static let baseURL = Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as? String ?? ""
+    public static let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? ""
 }

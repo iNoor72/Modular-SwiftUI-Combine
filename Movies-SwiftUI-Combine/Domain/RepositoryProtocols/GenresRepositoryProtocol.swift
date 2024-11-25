@@ -10,5 +10,5 @@ import NetworkLayer
 import Combine
 
 protocol GenresRepositoryProtocol {
-    func fetchGenres() -> AnyPublisher<[GenreItem], NetworkError>
+    func fetchGenres() -> AnyPublisher<GenresResponse, NetworkError>
 }

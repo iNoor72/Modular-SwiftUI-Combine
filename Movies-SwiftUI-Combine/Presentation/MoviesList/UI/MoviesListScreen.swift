@@ -60,7 +60,7 @@ extension MoviesListScreen {
     
     private var genresView: some View {
         GenresFilterView(genres: viewModel.genres, didSelectGenreAction: viewModel.didSelectGenreAction)
-            .padding(.horizontal, Constants.contentSpacing)
+            .frame(height: 40)
     }
     
     private var moviesListView: some View {

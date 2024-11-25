@@ -16,7 +16,7 @@ enum MoviesListScreenState {
 }
 
 final class MoviesListViewModel: ObservableObject {
-    @Published var state: MoviesListScreenState = .success
+    @Published var state: MoviesListScreenState = .initial
     @Published var movies: [MoviesResponseItem] = []
     @Published var genres: [GenreItem] = []
     @Published var searchQuery: String = ""
@@ -49,37 +49,40 @@ final class MoviesListViewModel: ObservableObject {
         fetchMovies(page: page, genres: selectedGenres)
     }
     
+    private func fetch() {
+        state = .loading
+        let movies = trendingMoviesUseCase.execute(page: page, genres: selectedGenres)
+        let genres = genresUseCase.execute()
+        let _ = Publishers.Zip(movies, genres)
+            .map { [weak self] (moviesResponse, genresResponse) in
+                self?.movies = moviesResponse.results ?? []
+                self?.genres = genresResponse.genres ?? []
+                self?.state = .success
+            }
+    }
+    
     private func fetchGenres() {
         state = .loading
         
         genresUseCase.execute()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    break
-                case .failure:
-                    break
-                }
-            }, receiveValue: { [weak self] genres in
-                self?.genres = genres
+                
+            }, receiveValue: { [weak self] genresResponse in
+                self?.genres = genresResponse.genres ?? []
+                self?.state = .success
             }).store(in: &cancellables)
     }
     
-    private func fetchMovies(page: Int = 0, genres: [GenreItem] = []) {
+    private func fetchMovies(page: Int = 1, genres: [GenreItem] = []) {
         state = .loading
         
-        trendingMoviesUseCase.execute(page: 0, genres: genres)
+        trendingMoviesUseCase.execute(page: page, genres: genres)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    break
-                case .failure:
-                    break
-                }
-            }, receiveValue: { [weak self] movies in
-                self?.movies = movies
+                
+            }, receiveValue: { [weak self] moviesResponse in
+                self?.movies = moviesResponse.results ?? []
                 self?.state = .success
             }).store(in: &cancellables)
     }

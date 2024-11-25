@@ -10,7 +10,7 @@ import Combine
 import NetworkLayer
 
 public protocol TrendingMoviesUseCase {
-    func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<[MoviesResponseItem], NetworkError>
+    func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<MoviesResponse, NetworkError>
 }
 
 public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
@@ -20,15 +20,15 @@ public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
         self.moviesListRepository = moviesListRepository
     }
     
-    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<[MoviesResponseItem], NetworkError> {
-        moviesListRepository.fetchMovies(with: page, genreIDs: genres.map { $0.id })
+    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<MoviesResponse, NetworkError> {
+        moviesListRepository.fetchMovies(with: page, genreIDs: genres.compactMap { $0.id })
     }
 }
 
 public final class TrendingMoviesUseCaseMock: TrendingMoviesUseCase {
-    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<[MoviesResponseItem], NetworkError> {
-        Future<[MoviesResponseItem], NetworkError> { promise in
-            promise(.success([MoviesResponseItem(id: 1)]))
+    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<MoviesResponse, NetworkError> {
+        Future<MoviesResponse, NetworkError> { promise in
+            promise(.success(MoviesResponse(results: [])))
         }.eraseToAnyPublisher()
     }
 }

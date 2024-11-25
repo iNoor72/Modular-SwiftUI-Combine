@@ -16,14 +16,13 @@ final class MoviesListRepository: MoviesListRepositoryProtocol {
         self.network = network
     }
     
-    func fetchMovies(with page: Int, genreIDs: [Int]) -> AnyPublisher<[MoviesResponseItem], NetworkError> {
+    func fetchMovies(with page: Int, genreIDs: [Int]) -> AnyPublisher<MoviesResponse, NetworkError> {
         do {
             let endpoint = MoviesEndpoint.trending(page: page, genreIDs: genreIDs)
-            return try network.fetch(endpoint: endpoint, expectedType: [MoviesResponseItem].self)
-                .receive(on: DispatchQueue.main)
+            return try network.fetch(endpoint: endpoint, expectedType: MoviesResponse.self)
                 .eraseToAnyPublisher()
         } catch {
-            return Future<[MoviesResponseItem], NetworkError> { promise in
+            return Future<MoviesResponse, NetworkError> { promise in
                 promise(.failure(NetworkError.decodingError))
             }.eraseToAnyPublisher()
         }

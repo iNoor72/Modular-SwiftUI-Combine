@@ -8,11 +8,15 @@
 import Foundation
 
 public struct GenresResponse: Codable {
-    public let genres: [GenreItem]
+    public let genres: [GenreItem]?
 }
 
 public struct GenreItem: Codable, Hashable, Identifiable {
-    public let id: Int
-    public let name: String
-    public var isSelected: Bool = false
+    public let id: Int?
+    public let name: String?
+//    public var isSelected: Bool = false
+//    
+//    func toGenreModel() -> GenreModel? {
+//        
+//    }
 }

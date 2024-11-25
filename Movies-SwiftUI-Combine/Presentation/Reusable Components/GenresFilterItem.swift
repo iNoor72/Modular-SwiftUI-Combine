@@ -12,15 +12,19 @@ struct GenresFilterItem: View {
     var didSelectGenreAction: ((GenreItem) -> ())?
     
     var body: some View {
-        Text(genre.name)
-            .padding()
-            .frame(height: 40)
+        Text(genre.name ?? "")
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(.yellow, lineWidth: 1)
+            )
             .onTapGesture {
                 didSelectGenreAction?(genre)
             }
-            .padding(.horizontal, 10)
+            .padding(4)
             .background {
-                if genre.isSelected {
+                if true {
                     
                 } else {
                     Color.black

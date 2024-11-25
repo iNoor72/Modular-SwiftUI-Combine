@@ -19,5 +19,6 @@ struct GenresFilterView: View {
                 }
             }
         }
+        .scrollIndicators(.hidden)
     }
 }

@@ -19,4 +19,9 @@ enum GenresEndpoint: Endpoint {
         .get
     }
     
+    var queryParams: [String : String]? {
+        [
+            "api_key": AppConfiguration.apiKey
+        ]
+    }
 }
