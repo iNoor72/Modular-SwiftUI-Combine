@@ -17,6 +17,12 @@ public struct MoviesResponseItem: Codable, Hashable, Identifiable {
     public let releaseDate: String?
     public let posterPath: String?
     
+    enum CodingKeys: String, CodingKey {
+        case id, title
+        case releaseDate = "release_date"
+        case posterPath = "poster_path"
+    }
+    
     func toMovieModel() -> MovieModel? {
         return MovieModel(
             id: id ?? 0,

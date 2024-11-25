@@ -8,6 +8,13 @@
 import Foundation
 import Combine
 
+enum MoviesListEvents {
+    case loadData
+    case loadMoreData
+    case didSelectGenre(GenreItem)
+    case navigateToDetails(MoviesResponseItem)
+}
+
 enum MoviesListScreenState {
     case initial
     case loading
@@ -23,42 +30,46 @@ final class MoviesListViewModel: ObservableObject {
     @Published private var selectedGenres: [GenreItem] = []
     @Published private var page: Int = 1
     
+    private let router: MoviesListRouterProtocol
     private let genresUseCase: GenresUseCase
     private let trendingMoviesUseCase: TrendingMoviesUseCase
     private var cancellables = Set<AnyCancellable>()
     
     init(
+        router: MoviesListRouterProtocol,
         genresUseCase: GenresUseCase,
         trendingMoviesUseCase: TrendingMoviesUseCase
     ) {
+        self.router = router
         self.genresUseCase = genresUseCase
         self.trendingMoviesUseCase = trendingMoviesUseCase
     }
     
-    func onAppear() {
+    func handle(_ event: MoviesListEvents) {
+        switch event {
+        case .loadData:
+            onAppear()
+        case .loadMoreData:
+            loadMoreMovies()
+        case .didSelectGenre(let genre):
+            didSelectGenreAction(genre: genre)
+        case .navigateToDetails(let movieItem):
+            router.navigate(to: .movieDetails(movieItem))
+        }
+    }
+    
+    private func onAppear() {
         fetchGenres()
         fetchMovies(page: page)
     }
     
-    func loadMoreMovies() {
+    private func loadMoreMovies() {
         fetchMovies(page: page + 1)
     }
     
-    func didSelectGenreAction(genre: GenreItem) {
+    private func didSelectGenreAction(genre: GenreItem) {
         selectedGenres.append(genre)
         fetchMovies(page: page, genres: selectedGenres)
-    }
-    
-    private func fetch() {
-        state = .loading
-        let movies = trendingMoviesUseCase.execute(page: page, genres: selectedGenres)
-        let genres = genresUseCase.execute()
-        let _ = Publishers.Zip(movies, genres)
-            .map { [weak self] (moviesResponse, genresResponse) in
-                self?.movies = moviesResponse.results ?? []
-                self?.genres = genresResponse.genres ?? []
-                self?.state = .success
-            }
     }
     
     private func fetchGenres() {

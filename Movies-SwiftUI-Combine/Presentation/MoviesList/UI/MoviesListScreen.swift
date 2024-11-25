@@ -27,13 +27,13 @@ struct MoviesListScreen: View {
         case .initial:
             Color.clear
                 .onAppear {
-                    viewModel.onAppear()
+                    viewModel.handle(.loadData)
                 }
         case .loading:
             ProgressView()
         case .failure(_):
             RetryView {
-                viewModel.onAppear()
+                viewModel.handle(.loadData)
             }
         case .success:
             contentView
@@ -59,22 +59,18 @@ extension MoviesListScreen {
     }
     
     private var genresView: some View {
-        GenresFilterView(genres: viewModel.genres, didSelectGenreAction: viewModel.didSelectGenreAction)
+        GenresFilterView(genres: viewModel.genres) { genre in
+            viewModel.handle(.didSelectGenre(genre))
+        }
             .frame(height: 40)
     }
     
     private var moviesListView: some View {
-        ScrollView(.vertical) {
-            LazyVStack {
-                ForEach(viewModel.movies, id: \.id) {
-                    MovieCardView(movieItem: $0)
-                }
-            }
-        }
-        .padding(.horizontal, Constants.contentSpacing)
+        MoviesListScrollView(movies: viewModel.movies)
+            .padding(.horizontal, Constants.contentSpacing)
     }
 }
 
 #Preview {
-    MoviesListScreen(viewModel: MoviesListViewModel(genresUseCase: GenresUseCaseMock(), trendingMoviesUseCase: TrendingMoviesUseCaseMock()))
+    MoviesListScreen(viewModel: MoviesListViewModel(router: MoviesListRouter(), genresUseCase: GenresUseCaseMock(), trendingMoviesUseCase: TrendingMoviesUseCaseMock()))
 }

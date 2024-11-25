@@ -8,5 +8,5 @@
 import Foundation
 
 enum AppConstants {
-    static let CoreDataModelName = "Model"
+    static let imagePlaceholderName = "image-placeholder"
 }

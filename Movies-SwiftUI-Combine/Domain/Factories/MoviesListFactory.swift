@@ -24,6 +24,7 @@ final class MoviesListFactory: MoviesListFactoryProtocol {
         let router = MoviesListRouter()
         
         let moviesListViewModel = MoviesListViewModel(
+            router: router,
             genresUseCase: genresUseCase,
             trendingMoviesUseCase: trendingMoviesUseCase
         )

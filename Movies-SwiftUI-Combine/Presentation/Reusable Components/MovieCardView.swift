@@ -11,6 +11,37 @@ struct MovieCardView: View {
     var movieItem: MoviesResponseItem
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack {
+            VStack {
+                CacheAsyncImage(path: movieItem.posterPath ?? "", content: { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                        
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .cornerRadius(8.0)
+                        
+                        //Including error state
+                    default:
+                        Image(AppConstants.imagePlaceholderName)
+                            .resizable()
+                            .scaledToFit()
+                            .cornerRadius(8.0)
+                    }
+                })
+                .frame(width: UIScreen.width - 32, height: 250)
+                
+                Text(movieItem.title ?? "")
+                    .bold()
+                    .foregroundStyle(.white)
+                
+                Text(movieItem.releaseDate ?? "")
+                    .foregroundStyle(.white)
+            }
+        }
     }
 }
+
