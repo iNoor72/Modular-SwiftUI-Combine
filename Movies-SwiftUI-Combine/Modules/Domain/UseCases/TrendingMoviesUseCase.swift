@@ -12,6 +12,12 @@ public protocol TrendingMoviesUseCase {
 }
 
 public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
+    private let moviesListRepository: MoviesListRepositoryProtocol
+    
+    init(moviesListRepository: MoviesListRepositoryProtocol) {
+        self.moviesListRepository = moviesListRepository
+    }
+    
 //    func fetchTrendingMovies() -> AnyPublisher<[Movie], Error> {
 //        
 //    }

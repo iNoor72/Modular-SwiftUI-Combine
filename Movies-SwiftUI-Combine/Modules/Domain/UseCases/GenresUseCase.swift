@@ -12,6 +12,11 @@ public protocol GenresUseCase {
 }
 
 public final class GenresUseCaseImpl: GenresUseCase {
+    private let genreRepository: GenresRepositoryProtocol
+    
+    init(genreRepository: GenresRepositoryProtocol) {
+        self.genreRepository = genreRepository
+    }
     
 //    func fetchGenres() -> AnyPublisher<[Genre], Error> {
 //        
