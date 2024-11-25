@@ -18,6 +18,11 @@ public struct MoviesResponseItem: Codable, Hashable, Identifiable {
     public let posterPath: String?
     
     func toMovieModel() -> MovieModel? {
-        return nil
+        return MovieModel(
+            id: id ?? 0,
+            title: title ?? "",
+            releaseDate: releaseDate ?? "",
+            posterPath: posterPath ?? ""
+        )
     }
 }

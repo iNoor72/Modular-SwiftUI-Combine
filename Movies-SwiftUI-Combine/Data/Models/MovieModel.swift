@@ -8,6 +8,8 @@
 import Foundation
 
 public struct MovieModel: Hashable, Identifiable {
-    public let id: String
+    public let id: Int
     public let title: String
+    public let releaseDate: String
+    public let posterPath: String
 }

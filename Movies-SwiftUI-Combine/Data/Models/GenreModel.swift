@@ -8,7 +8,7 @@
 import Foundation
 
 public struct GenreModel: Identifiable, Hashable {
-    public let id: String
-    public let title: String
+    public let id: Int
+    public let name: String
     public var isSelected: Bool = false
 }

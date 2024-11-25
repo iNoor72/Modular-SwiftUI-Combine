@@ -14,9 +14,8 @@ public struct GenresResponse: Codable {
 public struct GenreItem: Codable, Hashable, Identifiable {
     public let id: Int?
     public let name: String?
-//    public var isSelected: Bool = false
-//    
-//    func toGenreModel() -> GenreModel? {
-//        
-//    }
+    
+    func toGenreModel() -> GenreModel? {
+        GenreModel(id: id ?? 0, name: name ?? "", isSelected: false)
+    }
 }
