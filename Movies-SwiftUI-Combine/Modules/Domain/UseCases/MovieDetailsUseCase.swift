@@ -12,6 +12,11 @@ public protocol MovieDetailsUseCase {
 }
 
 public final class MovieDetailsUseCaseImpl: MovieDetailsUseCase {
+    private let movieDetailsRepository: MovieDetailsRepositoryProtocol
+    
+    init(movieDetailsRepository: MovieDetailsRepositoryProtocol) {
+        self.movieDetailsRepository = movieDetailsRepository
+    }
 //    func fetchMovieDetails(with movieId: Int) -> AnyPublisher<MovieDetails, Error> {
 //        
 //    }

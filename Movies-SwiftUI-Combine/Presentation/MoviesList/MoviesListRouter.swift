@@ -6,26 +6,28 @@
 //
 
 import UIKit
+import SwiftUI
 
-enum Destination {
+protocol MoviesListRouterProtocol {
+    func navigate(to destination: MoviesListDestination)
+}
+
+enum MoviesListDestination {
     case movieDetails(Movie)
 }
 
-protocol Router {
-    func navigate(to destination: Destination)
-}
-
-//MARK: This is an implementation for UIKit-based Router, it provides more flexibility and more easier to use than SwiftUI router
-final class MoviesListRouter: Router {
+final class MoviesListRouter: MoviesListRouterProtocol {
     weak var viewController: UIViewController?
     
-    func navigate(to destination: Destination) {
+    func navigate(to destination: MoviesListDestination) {
         switch destination {
         case .movieDetails(let movie):
             navigateToMovieDetails(movie)
         }
     }
-    
+}
+
+extension MoviesListRouter {
     private func navigateToMovieDetails(_ movie: Movie) {
         let movieDetailsFactory = MovieDetailsFactory()
         let movieDetailsView = movieDetailsFactory.make(with: 0)
