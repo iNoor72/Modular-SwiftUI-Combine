@@ -58,13 +58,13 @@ extension MoviesListScreen {
                 viewModel.handle(.clearSearch)
             },
             scrollContent: {
-                VStack(spacing: Constants.contentSpacing) {
+                LazyVStack(spacing: Constants.contentSpacing) {
                     genresView
                     moviesListView(movies: viewModel.movies)
                 }
                 .padding(.horizontal, Constants.contentSpacing)
             }, onSearchContent: {
-                VStack(spacing: Constants.contentSpacing) {
+                LazyVStack(spacing: Constants.contentSpacing) {
                     genresView
                     moviesListView(movies: viewModel.searchedMovies)
                 }

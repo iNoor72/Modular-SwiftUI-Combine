@@ -10,7 +10,7 @@ import Combine
 
 enum MoviesListEvents {
     case loadData
-    case loadMoreData
+    case loadMoreData(MoviesResponseItem)
     case search
     case clearSearch
     case didSelectGenre(GenreItem)
@@ -33,7 +33,13 @@ final class MoviesListViewModel: ObservableObject {
     @Published var searchQuery: String = ""
     @Published private var selectedGenres: [GenreItem] = []
     @Published private var page: Int = 1
+    @Published private var totalPages: Int = 1 {
+        didSet {
+            hasMoreRows = page < totalPages
+        }
+    }
     
+    var hasMoreRows = false
     private let dependencies: MoviesListDependencies
     private var cancellables = Set<AnyCancellable>()
     
@@ -45,8 +51,8 @@ final class MoviesListViewModel: ObservableObject {
         switch event {
         case .loadData:
             onAppear()
-        case .loadMoreData:
-            loadMoreMovies()
+        case .loadMoreData(let movie):
+            loadMoreMovies(movie: movie)
         case .search:
             page = 1
             searchMovies()
@@ -64,8 +70,14 @@ final class MoviesListViewModel: ObservableObject {
         fetchMovies(page: page)
     }
     
-    private func loadMoreMovies() {
-        fetchMovies(page: page + 1)
+    private func loadMoreMovies(movie: MoviesResponseItem) {
+        let lastMovieID = self.movies.last?.id
+        guard let lastMovieID, lastMovieID == movie.id, hasMoreRows else {
+            return
+        }
+        
+        page += 1
+        fetchMovies(page: page)
     }
     
     private func didSelectGenreAction(genre: GenreItem) {
@@ -109,6 +121,7 @@ final class MoviesListViewModel: ObservableObject {
                 }
             }, receiveValue: { [weak self] moviesResponse in
                 self?.movies = moviesResponse.results ?? []
+                self?.totalPages = moviesResponse.totalPages ?? 1
                 self?.state = .success
             }).store(in: &cancellables)
     }
@@ -134,6 +147,7 @@ final class MoviesListViewModel: ObservableObject {
                 print(comp)
             } receiveValue: {[weak self] response in
                 self?.searchedMovies = response.results ?? []
+                self?.totalPages = response.totalPages ?? 1
                 self?.state = .searching
             }.store(in: &cancellables)
     }

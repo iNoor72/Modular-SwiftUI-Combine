@@ -9,8 +9,14 @@ import Foundation
 
 public struct MoviesResponse: Codable {
     public let results: [MoviesResponseItem]?
+    public let totalPages: Int?
     
-    static let dummyData = MoviesResponse(results: [])
+    enum CodingKeys: String, CodingKey {
+        case results
+        case totalPages = "total_pages"
+    }
+    
+    static let dummyData = MoviesResponse(results: [], totalPages: nil)
 }
 
 public struct MoviesResponseItem: Codable, Hashable, Identifiable {
