@@ -17,6 +17,9 @@ struct MoviesListScreen: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             mainView
+            if viewModel.isLoading {
+                ProgressView()
+            }
         }
         .background(.black)
         .onChange(of: viewModel.debounceValue) { _ in
@@ -32,9 +35,7 @@ struct MoviesListScreen: View {
                 .onAppear {
                     viewModel.handle(.loadData)
                 }
-        case .loading:
-            ProgressView()
-        case .failure(_):
+        case .failure:
             RetryView {
                 viewModel.handle(.loadData)
             }
