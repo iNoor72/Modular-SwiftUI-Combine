@@ -17,18 +17,20 @@ enum MoviesListEvents {
     case navigateToDetails(MoviesResponseItem)
 }
 
-enum MoviesListScreenState {
+enum MoviesListScreenState: Int {
     case initial
-    case loading
     case success
     case searching
-    case failure(Error)
+    case failure
 }
 
 final class MoviesListViewModel: ObservableObject {
     @Published var state: MoviesListScreenState = .initial
     @Published var searchQuery: String = ""
     @Published var debounceValue = ""
+    @Published var isLoading = false
+    @Published var movies: [MoviesResponseItem] = []
+    var error: Error?
     private var page: Int = 1
     private var totalPages: Int = 1 {
         didSet {
@@ -37,7 +39,6 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     var selectedGenres: [GenreItem] = []
-    var movies: [MoviesResponseItem] = []
     var searchedMovies: [MoviesResponseItem] = []
     var filteredMovies: [MoviesResponseItem] = []
     var genres: [GenreItem] = []
@@ -51,6 +52,7 @@ final class MoviesListViewModel: ObservableObject {
         $searchQuery
             .debounce(for: 1.0, scheduler: RunLoop.main)
             .assign(to: &$debounceValue)
+        handle(.loadData)
     }
     
     func handle(_ event: MoviesListEvents) {
@@ -110,7 +112,7 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func fetchGenres() {
-        state = .loading
+        isLoading = true
         
         dependencies.genresUseCase.execute()
             .receive(on: DispatchQueue.main)
@@ -121,16 +123,18 @@ final class MoviesListViewModel: ObservableObject {
                 case .finished:
                     break
                 case .failure(let error):
-                    self.state = .failure(error)
+                    self.error = error
+                    self.state = .failure
                 }
             }, receiveValue: { [weak self] genresResponse in
                 self?.genres = genresResponse.genres ?? []
+                self?.isLoading = false
                 self?.state = .success
             }).store(in: &cancellables)
     }
     
     private func fetchMovies(page: Int = 1, genres: [GenreItem] = []) {
-        state = .loading
+        isLoading = true
         
         dependencies.trendingMoviesUseCase.execute(page: page, genres: genres)
             .receive(on: DispatchQueue.main)
@@ -141,7 +145,8 @@ final class MoviesListViewModel: ObservableObject {
                 case .finished:
                     break
                 case .failure(let error):
-                    self.state = .failure(error)
+                    self.error = error
+                    self.state = .failure
                 }
             }, receiveValue: { [weak self] moviesResponse in
                 if genres.isEmpty {
@@ -152,7 +157,10 @@ final class MoviesListViewModel: ObservableObject {
                 
                 self?.totalPages = moviesResponse.totalPages ?? 1
 //                self?.dependencies.trendingMoviesUseCase.cache(self?.movies ?? [])
-                self?.state = .success
+//                if self?.state != .success {
+                self?.isLoading = false
+                    self?.state = .success
+//                }
             }).store(in: &cancellables)
     }
     
@@ -183,7 +191,8 @@ final class MoviesListViewModel: ObservableObject {
                 case .finished:
                     break
                 case .failure(let error):
-                    self.state = .failure(error)
+                    self.error = error
+                    self.state = .failure
                 }
             } receiveValue: {[weak self] response in
                 self?.searchedMovies = response.results ?? []
