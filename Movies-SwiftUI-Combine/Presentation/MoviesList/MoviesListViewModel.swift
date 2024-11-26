@@ -101,6 +101,7 @@ final class MoviesListViewModel: ObservableObject {
     private func didSelectGenreAction(genre: GenreItem) {
         if selectedGenres.contains(genre) {
             if let index = selectedGenres.firstIndex(where: { $0.id == genre.id }) {
+        page = 1
                 selectedGenres.remove(at: index)
             }
         } else {
@@ -149,6 +150,11 @@ final class MoviesListViewModel: ObservableObject {
                 }
             }, receiveValue: { [weak self] moviesResponse in
                 self?.movies.append(contentsOf: moviesResponse.results ?? [])
+                if genres.isEmpty || (!genres.isEmpty && page > 1) {
+                    self?.movies.append(contentsOf: moviesResponse.results ?? [])
+                } else {
+                    self?.movies = moviesResponse.results ?? []
+                }
                 self?.totalPages = moviesResponse.totalPages ?? 1
                 self?.isLoading = false
                 self?.state = .success
