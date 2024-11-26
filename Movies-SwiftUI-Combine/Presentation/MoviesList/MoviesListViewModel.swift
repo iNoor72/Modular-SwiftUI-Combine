@@ -68,7 +68,14 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func didSelectGenreAction(genre: GenreItem) {
-        selectedGenres.append(genre)
+        if selectedGenres.contains(genre) {
+            if let index = selectedGenres.firstIndex(where: { $0.id == genre.id }) {
+                selectedGenres.remove(at: index)
+            }
+        } else {
+            selectedGenres.append(genre)
+        }
+        
         fetchMovies(page: page, genres: selectedGenres)
     }
     

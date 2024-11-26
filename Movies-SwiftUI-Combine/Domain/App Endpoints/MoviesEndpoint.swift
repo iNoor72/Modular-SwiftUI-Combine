@@ -30,7 +30,7 @@ public enum MoviesEndpoint: Endpoint {
                 "include_adult": 0.description,
                 "sort_by": "popularity.desc",
                 "page": page.description,
-//                "with_genres": genres.map { $0.description }.joined(separator: ",")
+                "with_genres": genres.map { $0.description }.joined(separator: ",")
             ]
         }
     }
