@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct MovieDetailsModel: Hashable, Identifiable {
-    public let id: String
-    public let title: String
-}
+//public struct MovieDetailsModel: Hashable, Identifiable {
+//    public let id: String
+//    public let title: String
+//}

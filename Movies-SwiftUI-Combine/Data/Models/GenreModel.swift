@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct GenreModel: Identifiable, Hashable {
-    public let id: Int
-    public let name: String
-    public var isSelected: Bool = false
-}
+//public struct GenreModel: Identifiable, Hashable {
+//    public let id: Int
+//    public let name: String
+//    public var isSelected: Bool = false
+//}

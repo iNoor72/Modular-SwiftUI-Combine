@@ -36,12 +36,12 @@ public struct MoviesResponseItem: Codable, Hashable, Identifiable {
         case posterPath = "poster_path"
     }
     
-    func toMovieModel() -> MovieModel? {
-        return MovieModel(
-            id: id ?? 0,
-            title: title ?? "",
-            releaseDate: releaseDate ?? "",
-            posterPath: posterPath ?? ""
-        )
-    }
+//    func toMovieModel() -> MovieModel {
+//        return MovieModel(
+//            id: id ?? 0,
+//            title: title ?? "",
+//            releaseDate: releaseDate ?? "",
+//            posterPath: posterPath ?? ""
+//        )
+//    }
 }
