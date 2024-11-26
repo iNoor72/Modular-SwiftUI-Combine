@@ -43,16 +43,15 @@ extension MovieDetailsScreen {
         VStack(spacing: 16) {
             movieDetailsView
         }
-        .padding(.horizontal, 16)
     }
     
     private var movieDetailsView: some View {
         ScrollView(.vertical) {
-            LazyVStack(alignment: .leading, spacing: 16) {
+            LazyVStack(alignment: .leading) {
                 image(path: viewModel.movieDetails?.backdropPath ?? "")
-                    .frame(maxHeight: UIScreen.height / 3, alignment: .center)
+                    .frame(width: UIScreen.width, height: UIScreen.height / 3)
                 
-                HStack(spacing: 16) {
+                HStack(spacing: 4) {
                     image(path: viewModel.movieDetails?.posterPath ?? "")
                         .frame(width: 100, height: 200)
                     
@@ -60,13 +59,20 @@ extension MovieDetailsScreen {
                         Text("\(viewModel.movieDetails?.title ?? "") (\(viewModel.movieDetails?.releaseDate ?? ""))")
                     }
                 }
+                .padding(.horizontal, 16)
                 
-                Text(viewModel.movieDetails?.overview ?? "")
-                    .lineLimit(nil)
-                
-                movieInfoView
+                LazyVStack(alignment: .leading, spacing: 16) {
+                    Text(viewModel.movieDetails?.overview ?? "")
+                        .lineLimit(nil)
+                    
+                    Spacer()
+                    
+                    movieInfoView
+                }
+                .padding(.horizontal, 16)
             }
         }
+        .ignoresSafeArea()
         .scrollIndicators(.hidden)
     }
     
