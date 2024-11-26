@@ -8,6 +8,10 @@
 import Foundation
 import Combine
 
+enum MoviesDetailsEvents {
+    case loadData
+}
+
 enum MovieDetailsScreenState {
     case initial
     case loading
@@ -17,17 +21,43 @@ enum MovieDetailsScreenState {
 
 final class MovieDetailsViewModel: ObservableObject {
     @Published var state: MovieDetailsScreenState = .initial
-    @Published var movieDetails: MovieDetailsModel?
+    @Published var movieDetails: MovieDetailsResponse?
     
     private let movieDetailsUseCase: MovieDetailsUseCase
     private let movieId: Int
+    private var cancellables = Set<AnyCancellable>()
     
     init(movieId: Int, movieDetailsUseCase: MovieDetailsUseCase) {
         self.movieId = movieId
         self.movieDetailsUseCase = movieDetailsUseCase
     }
     
-    func onAppear() {
-        
+    func handle(_ event: MoviesDetailsEvents) {
+        switch event {
+        case .loadData:
+            onAppear()
+        }
+    }
+    
+    private func onAppear() {
+        fetchDetails()
+    }
+    
+    private func fetchDetails() {
+        movieDetailsUseCase.execute(with: movieId)
+            .receive(on: DispatchQueue.main)
+            .sink {[weak self] completion in
+                guard let self else { return }
+                
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    self.state = .failure(error)
+                }
+            } receiveValue: { [weak self] response in
+                self?.movieDetails = response
+            }
+            .store(in: &cancellables)
     }
 }

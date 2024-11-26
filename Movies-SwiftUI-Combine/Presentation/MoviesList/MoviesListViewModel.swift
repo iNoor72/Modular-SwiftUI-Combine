@@ -90,8 +90,15 @@ final class MoviesListViewModel: ObservableObject {
         
         trendingMoviesUseCase.execute(page: page, genres: genres)
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
+            .sink(receiveCompletion: {[weak self] completion in
+                guard let self else { return }
                 
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    self.state = .failure(error)
+                }
             }, receiveValue: { [weak self] moviesResponse in
                 self?.movies = moviesResponse.results ?? []
                 self?.state = .success

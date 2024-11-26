@@ -16,7 +16,11 @@ public struct MoviesResponse: Codable {
 public struct MoviesResponseItem: Codable, Hashable, Identifiable {
     public let id: Int?
     public let title: String?
-    public let releaseDate: String?
+    public var releaseDate: String? {
+        didSet {
+            releaseDate = releaseDate?.components(separatedBy: "-").first ?? ""
+        }
+    }
     public let posterPath: String?
     
     enum CodingKeys: String, CodingKey {
