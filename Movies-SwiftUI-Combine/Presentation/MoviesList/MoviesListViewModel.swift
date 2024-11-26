@@ -166,6 +166,7 @@ final class MoviesListViewModel: ObservableObject {
     
     private func searchMovies(page: Int = 1) {
         isSearching = true
+        isLoading = true
         
         guard !searchQuery.isEmpty else {
             clearSearch()
@@ -186,9 +187,10 @@ final class MoviesListViewModel: ObservableObject {
                     self.state = .failure
                 }
             } receiveValue: {[weak self] response in
-                self?.searchedMovies = response.results ?? []
+                self?.searchedMovies.append(contentsOf: response.results ?? [])
                 self?.totalPages = response.totalPages ?? 1
-                self?.state = .searching
+                self?.isLoading = false
+                self?.state = .success
             }.store(in: &cancellables)
     }
 }
