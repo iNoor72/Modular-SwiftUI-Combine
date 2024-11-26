@@ -19,6 +19,9 @@ struct MoviesListScreen: View {
             mainView
         }
         .background(.black)
+        .onChange(of: viewModel.searchQuery) { _ in
+            viewModel.handle(.search)
+        }
     }
     
     @ViewBuilder
@@ -36,7 +39,10 @@ struct MoviesListScreen: View {
                 viewModel.handle(.loadData)
             }
         case .success:
-            contentView
+            contentView(movies: viewModel.movies)
+            
+        case .searching:
+            contentView(movies: viewModel.searchedMovies)
         }
     }
 }
@@ -44,18 +50,26 @@ struct MoviesListScreen: View {
 
 extension MoviesListScreen {
     @ViewBuilder
-    private var contentView: some View {
-        VStack(spacing: Constants.contentSpacing) {
-            searchBar
-            genresView
-            moviesListView
-        }
-        .padding(.horizontal, Constants.contentSpacing)
-    }
-    
-    private var searchBar: some View {
-        SearchBarView(query: $viewModel.searchQuery)
-            .padding(.horizontal, Constants.contentSpacing)
+    private func contentView(movies: [MoviesResponseItem]) -> some View {
+        SearchScrollView(
+            query: $viewModel.searchQuery,
+            showCancelButton: true,
+            cancelAction: {
+                viewModel.handle(.clearSearch)
+            },
+            scrollContent: {
+                VStack(spacing: Constants.contentSpacing) {
+                    genresView
+                    moviesListView(movies: viewModel.movies)
+                }
+                .padding(.horizontal, Constants.contentSpacing)
+            }, onSearchContent: {
+                VStack(spacing: Constants.contentSpacing) {
+                    genresView
+                    moviesListView(movies: viewModel.searchedMovies)
+                }
+                .padding(.horizontal, Constants.contentSpacing)
+            })
     }
     
     private var genresView: some View {
@@ -65,14 +79,10 @@ extension MoviesListScreen {
             .frame(height: 40)
     }
     
-    private var moviesListView: some View {
-        MoviesListScrollView(movies: viewModel.movies) { movie in
+    private func moviesListView(movies: [MoviesResponseItem]) -> some View {
+        MoviesListScrollView(movies: movies) { movie in
             viewModel.handle(.navigateToDetails(movie))
         }
             .padding(.horizontal, Constants.contentSpacing)
     }
-}
-
-#Preview {
-    MoviesListScreen(viewModel: MoviesListViewModel(router: MoviesListRouter(), genresUseCase: GenresUseCaseMock(), trendingMoviesUseCase: TrendingMoviesUseCaseMock()))
 }

@@ -17,26 +17,37 @@ final class MoviesListFactory: MoviesListFactoryProtocol {
     func make() -> UIViewController {
         let genresRepository = GenresRepository(network: NetworkManager.shared)
         let moviesListRepository = MoviesListRepository(network: NetworkManager.shared)
+        let searchingRepository = SearchRepository(network: NetworkManager.shared)
         
         let genresUseCase = GenresUseCaseImpl(genreRepository: genresRepository)
         let trendingMoviesUseCase = TrendingMoviesUseCaseImpl(moviesListRepository: moviesListRepository)
+        let searchMoviesUseCase = SearchMoviesUseCaseImpl(repository: searchingRepository)
         
         let router = MoviesListRouter()
         
-        let moviesListViewModel = MoviesListViewModel(
+        let viewModelDependencies = MoviesListDependencies(
             router: router,
             genresUseCase: genresUseCase,
-            trendingMoviesUseCase: trendingMoviesUseCase
+            trendingMoviesUseCase: trendingMoviesUseCase,
+            searchUseCase: searchMoviesUseCase
         )
+        
+        let moviesListViewModel = MoviesListViewModel(dependencies: viewModelDependencies)
         
         let usersListView = MoviesListScreen(viewModel: moviesListViewModel)
         let hostingViewController = UIHostingController(rootView: usersListView)
-        let navigationController = UINavigationController(rootViewController: hostingViewController)
         
         hostingViewController.navigationItem.title = "Movies"
         
         router.viewController = hostingViewController
         
-        return navigationController
+        return hostingViewController
     }
+}
+
+struct MoviesListDependencies {
+    let router: MoviesListRouterProtocol
+    let genresUseCase: GenresUseCase
+    let trendingMoviesUseCase: TrendingMoviesUseCase
+    let searchUseCase: SearchMoviesUseCase
 }

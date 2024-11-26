@@ -11,6 +11,8 @@ import Combine
 enum MoviesListEvents {
     case loadData
     case loadMoreData
+    case search
+    case clearSearch
     case didSelectGenre(GenreItem)
     case navigateToDetails(MoviesResponseItem)
 }
@@ -19,30 +21,24 @@ enum MoviesListScreenState {
     case initial
     case loading
     case success
+    case searching
     case failure(Error)
 }
 
 final class MoviesListViewModel: ObservableObject {
     @Published var state: MoviesListScreenState = .initial
     @Published var movies: [MoviesResponseItem] = []
+    @Published var searchedMovies: [MoviesResponseItem] = []
     @Published var genres: [GenreItem] = []
     @Published var searchQuery: String = ""
     @Published private var selectedGenres: [GenreItem] = []
     @Published private var page: Int = 1
     
-    private let router: MoviesListRouterProtocol
-    private let genresUseCase: GenresUseCase
-    private let trendingMoviesUseCase: TrendingMoviesUseCase
+    private let dependencies: MoviesListDependencies
     private var cancellables = Set<AnyCancellable>()
     
-    init(
-        router: MoviesListRouterProtocol,
-        genresUseCase: GenresUseCase,
-        trendingMoviesUseCase: TrendingMoviesUseCase
-    ) {
-        self.router = router
-        self.genresUseCase = genresUseCase
-        self.trendingMoviesUseCase = trendingMoviesUseCase
+    init(dependencies: MoviesListDependencies) {
+        self.dependencies = dependencies
     }
     
     func handle(_ event: MoviesListEvents) {
@@ -51,10 +47,15 @@ final class MoviesListViewModel: ObservableObject {
             onAppear()
         case .loadMoreData:
             loadMoreMovies()
+        case .search:
+            page = 1
+            searchMovies()
+        case .clearSearch:
+            clearSearch()
         case .didSelectGenre(let genre):
             didSelectGenreAction(genre: genre)
         case .navigateToDetails(let movieItem):
-            router.navigate(to: .movieDetails(movieItem))
+            dependencies.router.navigate(to: .movieDetails(movieItem))
         }
     }
     
@@ -82,7 +83,7 @@ final class MoviesListViewModel: ObservableObject {
     private func fetchGenres() {
         state = .loading
         
-        genresUseCase.execute()
+        dependencies.genresUseCase.execute()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 
@@ -95,7 +96,7 @@ final class MoviesListViewModel: ObservableObject {
     private func fetchMovies(page: Int = 1, genres: [GenreItem] = []) {
         state = .loading
         
-        trendingMoviesUseCase.execute(page: page, genres: genres)
+        dependencies.trendingMoviesUseCase.execute(page: page, genres: genres)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: {[weak self] completion in
                 guard let self else { return }
@@ -110,5 +111,29 @@ final class MoviesListViewModel: ObservableObject {
                 self?.movies = moviesResponse.results ?? []
                 self?.state = .success
             }).store(in: &cancellables)
+    }
+    
+    private func clearSearch() {
+        page = 1
+        selectedGenres = []
+        searchedMovies = []
+        searchQuery = ""
+    }
+    
+    private func searchMovies(page: Int = 1) {
+        guard !searchQuery.isEmpty else {
+            self.state = .success
+            return
+        }
+        
+        dependencies.searchUseCase.execute(page: page, query: searchQuery)
+            .receive(on: DispatchQueue.main)
+            .throttle(for: 3.0, scheduler: RunLoop.main, latest: true)
+            .sink { comp in
+                print(comp)
+            } receiveValue: {[weak self] response in
+                self?.searchedMovies = response.results ?? []
+                self?.state = .searching
+            }.store(in: &cancellables)
     }
 }

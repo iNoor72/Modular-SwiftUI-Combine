@@ -56,8 +56,9 @@ extension SceneDelegate {
     func setupRootView(from scene: UIScene) {
         let moviesListFactory = MoviesListFactory()
         let moviesListView = moviesListFactory.make()
+        let navigationController = UINavigationController(rootViewController: moviesListView)
         
-        self.window?.rootViewController = moviesListView
+        self.window?.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
     }
 }
