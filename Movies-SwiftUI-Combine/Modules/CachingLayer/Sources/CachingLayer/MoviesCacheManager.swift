@@ -8,8 +8,9 @@
 import Foundation
 import CoreData
 
-public final class MoviesCacheManager: MovieCacheManagerProtocol {
-    @MainActor static let shared = MoviesCacheManager()
+public final class MoviesCacheManager {
+    @MainActor public static let shared = MoviesCacheManager()
+    
     private init() {
         let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
         print(paths[0])
@@ -27,7 +28,7 @@ public final class MoviesCacheManager: MovieCacheManagerProtocol {
         return managedObjectModel
     }()
     
-    private(set) lazy var managedObjectContext: NSManagedObjectContext = {
+    private(set) public lazy var managedObjectContext: NSManagedObjectContext = {
         let managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
 
         managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
@@ -56,4 +57,44 @@ public final class MoviesCacheManager: MovieCacheManagerProtocol {
 
         return persistentStoreCoordinator
     }()
+}
+
+extension MoviesCacheManager: MovieCacheManagerProtocol {
+    public func save() {
+        if managedObjectContext.hasChanges {
+            do {
+                try managedObjectContext.save()
+            } catch let error as NSError {
+                NSLog("Unresolved error saving context: \(error), \(error.userInfo)")
+            }
+        }
+    }
+    
+    public func clearCache() {
+        do {
+            managedObjectContext.insertedObjects.forEach {
+                managedObjectContext.delete($0)
+            }
+            
+            try managedObjectContext.save()
+        } catch {
+            NSLog("Unresolved error deleting then saving context: \(error)")
+        }
+    }
+    
+    public func fetchAllObjects<T: NSManagedObject>(_ type: T.Type) -> [NSFetchRequestResult] {
+        let fetchRequest = type.fetchRequest()
+        let result = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                      managedObjectContext: managedObjectContext,
+                                                      sectionNameKeyPath: nil,
+                                                      cacheName: nil)
+        return result.fetchedObjects ?? []
+    }
+    
+    public func fetchObject<T: NSManagedObject>(_ type: T.Type, with id: String) -> T? {
+        return nil
+    }
+    public func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: String) -> T? {
+        return nil
+    }
 }

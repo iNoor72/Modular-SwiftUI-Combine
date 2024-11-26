@@ -11,4 +11,5 @@ import NetworkLayer
 
 protocol MoviesListRepositoryProtocol {
     func fetchMovies(with page: Int, genreIDs: [Int]) -> AnyPublisher<MoviesResponse, NetworkError>
+    func cacheMovies(_ movies: [MoviesResponseItem])
 }

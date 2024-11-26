@@ -8,12 +8,15 @@
 import Foundation
 import Combine
 import NetworkLayer
+import CachingLayer
 
 final class MovieDetailsRepository: MovieDetailsRepositoryProtocol {
     private let network: NetworkServiceProtocol
+    private let cache: MovieCacheManagerProtocol
     
-    init(network: NetworkServiceProtocol) {
+    init(network: NetworkServiceProtocol, cache: MovieCacheManagerProtocol) {
         self.network = network
+        self.cache = cache
     }
     
     func fetchMovieDetails(with movieId: Int) -> AnyPublisher<MovieDetailsResponse, NetworkError> {

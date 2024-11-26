@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import CoreData
+import CachingLayer
 
 public struct MoviesResponse: Codable {
     public let results: [MoviesResponseItem]?
@@ -36,12 +38,13 @@ public struct MoviesResponseItem: Codable, Hashable, Identifiable {
         case posterPath = "poster_path"
     }
     
-//    func toMovieModel() -> MovieModel {
-//        return MovieModel(
-//            id: id ?? 0,
-//            title: title ?? "",
-//            releaseDate: releaseDate ?? "",
-//            posterPath: posterPath ?? ""
-//        )
-//    }
+    public func toMovieModel(context: NSManagedObjectContext) -> MovieModel {
+        let model = MovieModel(context: context)
+        model.id = Int16(id ?? 0)
+        model.title = title ?? ""
+        model.releaseDate = releaseDate ?? ""
+        model.posterPath = posterPath ?? ""
+        
+        return model
+    }
 }

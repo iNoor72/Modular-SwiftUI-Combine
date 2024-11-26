@@ -39,6 +39,7 @@ final class MoviesListViewModel: ObservableObject {
     var selectedGenres: [GenreItem] = []
     var movies: [MoviesResponseItem] = []
     var searchedMovies: [MoviesResponseItem] = []
+    var filteredMovies: [MoviesResponseItem] = []
     var genres: [GenreItem] = []
     var hasMoreRows = false
     var isSearching = false
@@ -143,8 +144,14 @@ final class MoviesListViewModel: ObservableObject {
                     self.state = .failure(error)
                 }
             }, receiveValue: { [weak self] moviesResponse in
-                self?.movies.append(contentsOf: moviesResponse.results ?? [])
+                if genres.isEmpty {
+                    self?.movies.append(contentsOf: moviesResponse.results ?? [])
+                } else {
+                    self?.filteredMovies = moviesResponse.results ?? []
+                }
+                
                 self?.totalPages = moviesResponse.totalPages ?? 1
+//                self?.dependencies.trendingMoviesUseCase.cache(self?.movies ?? [])
                 self?.state = .success
             }).store(in: &cancellables)
     }

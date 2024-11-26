@@ -57,7 +57,11 @@ extension MoviesListScreen {
             scrollContent: {
                 LazyVStack(spacing: Constants.contentSpacing) {
                     genresView
-                    moviesListView(movies: viewModel.movies)
+                    if viewModel.selectedGenres.isEmpty {
+                        moviesListView(movies: viewModel.movies)
+                    } else {
+                        moviesListView(movies: viewModel.filteredMovies)
+                    }
                 }
                 .padding(.horizontal, Constants.contentSpacing)
             }, onSearchContent: {

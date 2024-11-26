@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import CoreData
+import CachingLayer
 
 public struct MovieDetailsResponse: Codable {
     public let id: Int?
@@ -35,8 +37,35 @@ public struct MovieDetailsResponse: Codable {
     }
     
     static let dummyData = MovieDetailsResponse(id: nil, title: nil, budget: nil, posterPath: nil, releaseDate: nil, backdropPath: nil, overview: nil, homepage: nil, spokenLanguages: nil, status: nil, runtime: nil, genres: nil)
+    
+    public func toMovieDetailsModel(context: NSManagedObjectContext) -> MovieDetailsModel {
+        let entity = MovieDetailsModel(context: context)
+        entity.id = Int16(id ?? 0)
+        entity.uuid = UUID()
+        entity.title = title
+        entity.budget = Int16(budget ?? 0)
+        entity.posterPath = posterPath
+        entity.releaseDate = releaseDate
+        entity.backdropPath = backdropPath
+        entity.overview = overview
+        entity.homepage = homepage
+        entity.status = status
+        entity.runtime = Int16(runtime ?? 0)
+        entity.genres?.addingObjects(from: genres?.map { $0.toGenreModel(context: context) } ?? [])
+        entity.spokenLanguages?.addingObjects(from: spokenLanguages?.map { $0.toSpokenLanguageModel(context: context)} ?? [])
+        
+        return entity
+    }
 }
 
 public struct SpokenLanguageItem: Codable {
     public let name: String?
+    
+    public func toSpokenLanguageModel(context: NSManagedObjectContext) -> SpokenLanguageModel {
+        let entity = SpokenLanguageModel(context: context)
+        entity.name = name
+        entity.uuid = UUID()
+        
+        return entity
+    }
 }

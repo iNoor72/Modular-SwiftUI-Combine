@@ -8,7 +8,11 @@
 import CoreData
 
 public protocol MovieCacheManagerProtocol {
-//    func save(object: NSManagedObject)
-//    func fetchMovieDetails(request: NSFetchRequest<MovieDetails>) -> MovieDetails?
-//    func fetchMovies(request: NSFetchRequest<Movie>) -> [Movie]?
+    var managedObjectContext: NSManagedObjectContext { get }
+    
+    func save()
+    func fetchAllObjects<T: NSManagedObject>(_ type: T.Type) -> [NSFetchRequestResult]
+    func fetchObject<T: NSManagedObject>(_ type: T.Type, with id: String) -> T?
+    func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: String) -> T?
+    func clearCache()
 }
