@@ -49,6 +49,14 @@ final class MovieDetailsViewModel: ObservableObject {
         movieDetailsUseCase.execute(with: movieId)
             .receive(on: DispatchQueue.main)
             .sink {[weak self] completion in
+                guard let self else { return }
+                
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    self.state = .failure(error)
+                }
             } receiveValue: { [weak self] response in
                 self?.movieDetails = response
                 self?.state = .success

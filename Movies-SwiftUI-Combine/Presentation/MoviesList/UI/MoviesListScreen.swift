@@ -61,6 +61,13 @@ extension MoviesListScreen {
                 LazyVStack(spacing: Constants.contentSpacing) {
                     genresView
                     moviesListView(movies: viewModel.movies)
+                    
+                    if viewModel.hasMoreRows {
+                        Text(AppStrings.fetchingMoreDataString)
+                            .onAppear {
+                                viewModel.handle(.loadMoreData)
+                            }
+                    }
                 }
                 .padding(.horizontal, Constants.contentSpacing)
             }, onSearchContent: {

@@ -32,7 +32,7 @@ struct MovieCardView: View {
                             .cornerRadius(8.0)
                     }
                 })
-                .frame(width: UIScreen.width - 32, height: 250)
+                .frame(height: 250)
                 
                 Text(movieItem.title ?? "")
                     .bold()

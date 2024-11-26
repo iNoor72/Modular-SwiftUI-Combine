@@ -10,7 +10,7 @@ import Combine
 
 enum MoviesListEvents {
     case loadData
-    case loadMoreData(MoviesResponseItem)
+    case loadMoreData
     case search
     case clearSearch
     case didSelectGenre(GenreItem)
@@ -27,18 +27,18 @@ enum MoviesListScreenState {
 
 final class MoviesListViewModel: ObservableObject {
     @Published var state: MoviesListScreenState = .initial
-    @Published var movies: [MoviesResponseItem] = []
-    @Published var searchedMovies: [MoviesResponseItem] = []
-    @Published var genres: [GenreItem] = []
     @Published var searchQuery: String = ""
-    @Published private var selectedGenres: [GenreItem] = []
-    @Published private var page: Int = 1
-    @Published private var totalPages: Int = 1 {
+    private var page: Int = 1
+    private var totalPages: Int = 1 {
         didSet {
             hasMoreRows = page < totalPages
         }
     }
     
+    var selectedGenres: [GenreItem] = []
+    var movies: [MoviesResponseItem] = []
+    var searchedMovies: [MoviesResponseItem] = []
+    var genres: [GenreItem] = []
     var hasMoreRows = false
     private let dependencies: MoviesListDependencies
     private var cancellables = Set<AnyCancellable>()
@@ -51,8 +51,8 @@ final class MoviesListViewModel: ObservableObject {
         switch event {
         case .loadData:
             onAppear()
-        case .loadMoreData(let movie):
-            loadMoreMovies(movie: movie)
+        case .loadMoreData:
+            loadMoreMovies()
         case .search:
             page = 1
             searchMovies()
@@ -70,9 +70,8 @@ final class MoviesListViewModel: ObservableObject {
         fetchMovies(page: page)
     }
     
-    private func loadMoreMovies(movie: MoviesResponseItem) {
-        let lastMovieID = self.movies.last?.id
-        guard let lastMovieID, lastMovieID == movie.id, hasMoreRows else {
+    private func loadMoreMovies() {
+        guard hasMoreRows else {
             return
         }
         
@@ -120,7 +119,7 @@ final class MoviesListViewModel: ObservableObject {
                     self.state = .failure(error)
                 }
             }, receiveValue: { [weak self] moviesResponse in
-                self?.movies = moviesResponse.results ?? []
+                self?.movies.append(contentsOf: moviesResponse.results ?? [])
                 self?.totalPages = moviesResponse.totalPages ?? 1
                 self?.state = .success
             }).store(in: &cancellables)
@@ -146,7 +145,7 @@ final class MoviesListViewModel: ObservableObject {
             .sink { comp in
                 print(comp)
             } receiveValue: {[weak self] response in
-                self?.searchedMovies = response.results ?? []
+                self?.searchedMovies.append(contentsOf: response.results ?? [])
                 self?.totalPages = response.totalPages ?? 1
                 self?.state = .searching
             }.store(in: &cancellables)
