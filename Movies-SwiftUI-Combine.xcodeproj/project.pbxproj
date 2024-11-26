@@ -11,8 +11,19 @@
 		87341F7D2CF4A1ED004B6835 /* NetworkLayer in Frameworks */ = {isa = PBXBuildFile; productRef = 87341F7C2CF4A1ED004B6835 /* NetworkLayer */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		873421DD2CF66604004B6835 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 87341F012CF494B3004B6835 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 87341F082CF494B3004B6835;
+			remoteInfo = "Movies-SwiftUI-Combine";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		87341F092CF494B3004B6835 /* Movies-SwiftUI-Combine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Movies-SwiftUI-Combine.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		873421D92CF66604004B6835 /* Movies-SwiftUI-CombineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Movies-SwiftUI-CombineTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +47,11 @@
 			path = "Movies-SwiftUI-Combine";
 			sourceTree = "<group>";
 		};
+		873421DA2CF66604004B6835 /* Movies-SwiftUI-CombineTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Movies-SwiftUI-CombineTests";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +64,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		873421D62CF66604004B6835 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -55,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				87341F0B2CF494B3004B6835 /* Movies-SwiftUI-Combine */,
+				873421DA2CF66604004B6835 /* Movies-SwiftUI-CombineTests */,
 				87341F3C2CF499B5004B6835 /* Frameworks */,
 				87341F0A2CF494B3004B6835 /* Products */,
 			);
@@ -64,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				87341F092CF494B3004B6835 /* Movies-SwiftUI-Combine.app */,
+				873421D92CF66604004B6835 /* Movies-SwiftUI-CombineTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,6 +127,29 @@
 			productReference = 87341F092CF494B3004B6835 /* Movies-SwiftUI-Combine.app */;
 			productType = "com.apple.product-type.application";
 		};
+		873421D82CF66604004B6835 /* Movies-SwiftUI-CombineTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 873421DF2CF66604004B6835 /* Build configuration list for PBXNativeTarget "Movies-SwiftUI-CombineTests" */;
+			buildPhases = (
+				873421D52CF66604004B6835 /* Sources */,
+				873421D62CF66604004B6835 /* Frameworks */,
+				873421D72CF66604004B6835 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				873421DE2CF66604004B6835 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				873421DA2CF66604004B6835 /* Movies-SwiftUI-CombineTests */,
+			);
+			name = "Movies-SwiftUI-CombineTests";
+			packageProductDependencies = (
+			);
+			productName = "Movies-SwiftUI-CombineTests";
+			productReference = 873421D92CF66604004B6835 /* Movies-SwiftUI-CombineTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -114,6 +162,10 @@
 				TargetAttributes = {
 					87341F082CF494B3004B6835 = {
 						CreatedOnToolsVersion = 16.0;
+					};
+					873421D82CF66604004B6835 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = 87341F082CF494B3004B6835;
 					};
 				};
 			};
@@ -134,12 +186,20 @@
 			projectRoot = "";
 			targets = (
 				87341F082CF494B3004B6835 /* Movies-SwiftUI-Combine */,
+				873421D82CF66604004B6835 /* Movies-SwiftUI-CombineTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		87341F072CF494B3004B6835 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		873421D72CF66604004B6835 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -156,7 +216,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		873421D52CF66604004B6835 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		873421DE2CF66604004B6835 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 87341F082CF494B3004B6835 /* Movies-SwiftUI-Combine */;
+			targetProxy = 873421DD2CF66604004B6835 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		87341F1D2CF494B5004B6835 /* Debug */ = {
@@ -340,6 +415,42 @@
 			};
 			name = Release;
 		};
+		873421E02CF66604004B6835 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NF6L68DRU6;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iNoor.Movies-SwiftUI-CombineTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Movies-SwiftUI-Combine.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Movies-SwiftUI-Combine";
+			};
+			name = Debug;
+		};
+		873421E12CF66604004B6835 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NF6L68DRU6;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iNoor.Movies-SwiftUI-CombineTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Movies-SwiftUI-Combine.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Movies-SwiftUI-Combine";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -357,6 +468,15 @@
 			buildConfigurations = (
 				87341F1D2CF494B5004B6835 /* Debug */,
 				87341F1E2CF494B5004B6835 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		873421DF2CF66604004B6835 /* Build configuration list for PBXNativeTarget "Movies-SwiftUI-CombineTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				873421E02CF66604004B6835 /* Debug */,
+				873421E12CF66604004B6835 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
