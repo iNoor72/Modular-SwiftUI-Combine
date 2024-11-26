@@ -20,6 +20,7 @@ public struct MoviesResponse: Codable {
 }
 
 public struct MoviesResponseItem: Codable, Hashable, Identifiable {
+    public let uuid = UUID()
     public let id: Int?
     public let title: String?
     public var releaseDate: String? {

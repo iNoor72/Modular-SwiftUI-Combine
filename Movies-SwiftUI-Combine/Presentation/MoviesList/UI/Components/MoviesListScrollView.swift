@@ -14,18 +14,19 @@ struct MoviesListScrollView: View {
     ]
     let movies: [MoviesResponseItem]
     let onItemClick: (MoviesResponseItem) -> Void
+    let onAppearAction: ((MoviesResponseItem) -> Void)
     
     var body: some View {
-        ScrollView(.vertical) {
-            LazyVGrid(columns: columns) {
-                ForEach(movies, id: \.id) { movie in
-                    MovieCardView(movieItem: movie)
-                        .onTapGesture {
-                            onItemClick(movie)
-                        }
-                }
+        LazyVGrid(columns: columns) {
+            ForEach(movies, id: \.uuid) { movie in
+                MovieCardView(movieItem: movie)
+                    .onAppear {
+                        onAppearAction(movie)
+                    }
+                    .onTapGesture {
+                        onItemClick(movie)
+                    }
             }
         }
-        .scrollIndicators(.hidden)
     }
 }

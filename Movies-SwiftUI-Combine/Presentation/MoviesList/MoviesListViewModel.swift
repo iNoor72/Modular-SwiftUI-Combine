@@ -28,6 +28,7 @@ enum MoviesListScreenState {
 final class MoviesListViewModel: ObservableObject {
     @Published var state: MoviesListScreenState = .initial
     @Published var searchQuery: String = ""
+    @Published var debounceValue = ""
     private var page: Int = 1
     private var totalPages: Int = 1 {
         didSet {
@@ -40,11 +41,15 @@ final class MoviesListViewModel: ObservableObject {
     var searchedMovies: [MoviesResponseItem] = []
     var genres: [GenreItem] = []
     var hasMoreRows = false
+    var isSearching = false
     private let dependencies: MoviesListDependencies
     private var cancellables = Set<AnyCancellable>()
     
     init(dependencies: MoviesListDependencies) {
         self.dependencies = dependencies
+        $searchQuery
+            .debounce(for: 1.0, scheduler: RunLoop.main)
+            .assign(to: &$debounceValue)
     }
     
     func handle(_ event: MoviesListEvents) {
@@ -70,13 +75,25 @@ final class MoviesListViewModel: ObservableObject {
         fetchMovies(page: page)
     }
     
+    func validatePagination(with movie: MoviesResponseItem) {
+        let movies = isSearching ? searchedMovies : movies
+        if let lastMovie = movies.last, movie.id == lastMovie.id {
+            loadMoreMovies()
+        }
+    }
+    
     private func loadMoreMovies() {
         guard hasMoreRows else {
             return
         }
         
         page += 1
-        fetchMovies(page: page)
+        
+        if isSearching {
+            searchMovies(page: page)
+        } else {
+            fetchMovies(page: page)
+        }
     }
     
     private func didSelectGenreAction(genre: GenreItem) {
@@ -96,8 +113,15 @@ final class MoviesListViewModel: ObservableObject {
         
         dependencies.genresUseCase.execute()
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
+            .sink(receiveCompletion: {[weak self] completion in
+                guard let self else { return }
                 
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    self.state = .failure(error)
+                }
             }, receiveValue: { [weak self] genresResponse in
                 self?.genres = genresResponse.genres ?? []
                 self?.state = .success
@@ -130,22 +154,32 @@ final class MoviesListViewModel: ObservableObject {
         selectedGenres = []
         searchedMovies = []
         searchQuery = ""
+        isSearching = false
         state = .success
     }
     
     private func searchMovies(page: Int = 1) {
+        isSearching = true
+        
         guard !searchQuery.isEmpty else {
-            self.state = .success
+            clearSearch()
             return
         }
         
         dependencies.searchUseCase.execute(page: page, query: searchQuery)
             .receive(on: DispatchQueue.main)
             .throttle(for: 3.0, scheduler: RunLoop.main, latest: true)
-            .sink { comp in
-                print(comp)
+            .sink {[weak self] completion in
+                guard let self else { return }
+                
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    self.state = .failure(error)
+                }
             } receiveValue: {[weak self] response in
-                self?.searchedMovies.append(contentsOf: response.results ?? [])
+                self?.searchedMovies = response.results ?? []
                 self?.totalPages = response.totalPages ?? 1
                 self?.state = .searching
             }.store(in: &cancellables)

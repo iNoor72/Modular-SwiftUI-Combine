@@ -19,7 +19,7 @@ struct MoviesListScreen: View {
             mainView
         }
         .background(.black)
-        .onChange(of: viewModel.searchQuery) { _ in
+        .onChange(of: viewModel.debounceValue) { _ in
             viewModel.handle(.search)
         }
     }
@@ -38,11 +38,8 @@ struct MoviesListScreen: View {
             RetryView {
                 viewModel.handle(.loadData)
             }
-        case .success:
-            contentView(movies: viewModel.movies)
-            
-        case .searching:
-            contentView(movies: viewModel.searchedMovies)
+        case .success, .searching:
+            contentView
         }
     }
 }
@@ -50,7 +47,7 @@ struct MoviesListScreen: View {
 
 extension MoviesListScreen {
     @ViewBuilder
-    private func contentView(movies: [MoviesResponseItem]) -> some View {
+    private var contentView: some View {
         SearchScrollView(
             query: $viewModel.searchQuery,
             showCancelButton: true,
@@ -61,13 +58,6 @@ extension MoviesListScreen {
                 LazyVStack(spacing: Constants.contentSpacing) {
                     genresView
                     moviesListView(movies: viewModel.movies)
-                    
-                    if viewModel.hasMoreRows {
-                        Text(AppStrings.fetchingMoreDataString)
-                            .onAppear {
-                                viewModel.handle(.loadMoreData)
-                            }
-                    }
                 }
                 .padding(.horizontal, Constants.contentSpacing)
             }, onSearchContent: {
@@ -89,6 +79,8 @@ extension MoviesListScreen {
     private func moviesListView(movies: [MoviesResponseItem]) -> some View {
         MoviesListScrollView(movies: movies) { movie in
             viewModel.handle(.navigateToDetails(movie))
+        } onAppearAction: { movie in
+            viewModel.validatePagination(with: movie)
         }
             .padding(.horizontal, Constants.contentSpacing)
     }
