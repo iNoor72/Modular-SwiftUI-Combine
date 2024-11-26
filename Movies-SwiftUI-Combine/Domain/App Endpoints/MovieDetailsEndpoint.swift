@@ -19,6 +19,12 @@ public enum MovieDetailsEndpoint: Endpoint {
     }
     
     public var method: HTTPMethod {
-        return .get
+        .get
+    }
+    
+    public var queryParams: [String : String]? {
+        return [
+            "api_key": AppConfiguration.apiKey
+        ]
     }
 }

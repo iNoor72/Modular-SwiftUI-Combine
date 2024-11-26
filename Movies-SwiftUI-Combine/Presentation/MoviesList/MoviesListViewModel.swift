@@ -118,6 +118,7 @@ final class MoviesListViewModel: ObservableObject {
         selectedGenres = []
         searchedMovies = []
         searchQuery = ""
+        state = .success
     }
     
     private func searchMovies(page: Int = 1) {

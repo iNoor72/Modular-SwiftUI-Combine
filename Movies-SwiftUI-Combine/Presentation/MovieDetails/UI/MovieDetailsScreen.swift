@@ -48,25 +48,21 @@ extension MovieDetailsScreen {
     
     private var movieDetailsView: some View {
         ScrollView(.vertical) {
-            LazyVStack {
+            LazyVStack(alignment: .leading, spacing: 16) {
                 image(path: viewModel.movieDetails?.backdropPath ?? "")
-                .frame(height: UIScreen.height / 3)
+                    .frame(maxHeight: UIScreen.height / 3, alignment: .center)
                 
                 HStack(spacing: 16) {
                     image(path: viewModel.movieDetails?.posterPath ?? "")
                         .frame(width: 100, height: 200)
                     
-                    VStack {
-                        Text("\(viewModel.movieDetails?.title ?? "") (\(viewModel.movieDetails?.releaseDate ?? "")")
-                            .lineLimit(0)
+                    LazyVStack {
+                        Text("\(viewModel.movieDetails?.title ?? "") (\(viewModel.movieDetails?.releaseDate ?? ""))")
                     }
                 }
                 
-                ScrollView(.vertical) {
-                    Text(viewModel.movieDetails?.overview ?? "")
-                        .lineLimit(0)
-                }
-                .scrollIndicators(.hidden)
+                Text(viewModel.movieDetails?.overview ?? "")
+                    .lineLimit(nil)
                 
                 movieInfoView
             }
@@ -97,8 +93,8 @@ extension MovieDetailsScreen {
     }
     
     private var movieInfoView: some View {
-        VStack(spacing: 8) {
-            HStack {
+        VStack(alignment: .leading, spacing: 4) {
+            LazyHStack {
                 Text("Homepage:")
                     .bold()
                     .foregroundStyle(.white)
@@ -106,12 +102,13 @@ extension MovieDetailsScreen {
                 Text(viewModel.movieDetails?.homepage ?? "")
             }
             
-            HStack {
+            LazyHStack {
                 Text("Languages:")
                     .bold()
                     .foregroundStyle(.white)
                 
-                Text(viewModel.movieDetails?.spokenLanguages?.map { $0.name ?? "" }.joined(separator: ",") ?? "")
+                Text(viewModel.movieDetails?.spokenLanguages?.map { $0.name ?? "" }.joined(separator: ", ") ?? "")
+                    .lineLimit(3)
             }
         }
     }

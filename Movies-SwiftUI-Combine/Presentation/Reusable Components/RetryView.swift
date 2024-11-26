@@ -2,19 +2,67 @@
 //  RetryView.swift
 //  Movies-SwiftUI-Combine
 //
-//  Created by Noor El-Din Walid on 25/11/2024.
+//  Created by Noor El-Din Walid on 26/11/2024.
 //
+
 
 import SwiftUI
 
 struct RetryView: View {
-    var retryAction: () -> Void
+    var action: () -> Void
+    var dismissAction: (() -> ())?
     
+    @Environment(\.dismiss) private var dismiss
+    
+    // MARK: - Body
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(alignment: .center, spacing: 40) {
+            Spacer()
+            imageView
+            textView
+            browseButton(title: "Refresh", action: action)
+            Spacer()
+        }
     }
 }
 
-#Preview {
-    RetryView (retryAction: {})
+extension RetryView {
+    private var imageView: some View {
+        Image(systemName: "arrow.circlepath")
+            .resizable()
+            .frame(maxWidth: 200, maxHeight: 200)
+    }
+    
+    private var textView: some View {
+        VStack(alignment: .center, spacing: 8) {
+            title
+            subTitle
+                .padding(.horizontal, 32)
+        }
+    }
+}
+
+extension RetryView {
+    private var title: some View {
+        Text("Failed to Load")
+            .foregroundStyle(.white)
+    }
+    
+    private var subTitle: some View {
+        Text("An unexpected error has occurred. You can try again by refreshing this page")
+            .foregroundStyle(.white)
+            .multilineTextAlignment(.center)
+    }
+    
+    private func browseButton(title: LocalizedStringKey, action : @escaping () -> Void) -> some View {
+        Button {
+            action()
+        } label: {
+            HStack{
+                Image(systemName: "arrow.circlepath")
+                Text(title)
+                    .foregroundStyle(.white)
+            }
+        }
+    }
 }
