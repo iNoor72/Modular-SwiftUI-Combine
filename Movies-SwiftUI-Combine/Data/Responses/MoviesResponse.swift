@@ -40,7 +40,8 @@ public struct MoviesResponseItem: Codable, Hashable, Identifiable {
     
     public func toMovieModel(context: NSManagedObjectContext) -> MovieModel {
         let model = MovieModel(context: context)
-        model.id = Int16(id ?? 0)
+        model.uuid = UUID()
+        model.id = Int64(id ?? 0)
         model.title = title ?? ""
         model.releaseDate = releaseDate ?? ""
         model.posterPath = posterPath ?? ""

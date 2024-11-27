@@ -22,7 +22,7 @@ public struct GenreItem: Codable, Hashable, Identifiable {
     func toGenreModel(context: NSManagedObjectContext) -> GenreModel {
         let entity = GenreModel(context: context)
         entity.uuid = UUID()
-        entity.id = Int16(id ?? 0)
+        entity.id = Int64(id ?? 0)
         entity.name = name ?? ""
         entity.isSelected = false
         

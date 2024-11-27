@@ -17,7 +17,7 @@ public final class MoviesCacheManager {
     }
     
     private lazy var managedObjectModel: NSManagedObjectModel = {
-        guard let modelURL = Bundle.main.url(forResource: AppConstants.CoreDataModelName, withExtension: "momd") else {
+        guard let modelURL = Bundle.module.url(forResource: AppConstants.CoreDataModelName, withExtension: "momd") else {
             fatalError("Unable to Find Data Model")
         }
 

@@ -13,7 +13,6 @@ import CachingLayer
 final class MoviesListRepository: MoviesListRepositoryProtocol {
     private let network: NetworkServiceProtocol
     private let cache: MovieCacheManagerProtocol
-    let service = MovieModelService()
     
     init(network: NetworkServiceProtocol, cache: MovieCacheManagerProtocol) {
         self.network = network
@@ -43,5 +42,15 @@ final class MoviesListRepository: MoviesListRepositoryProtocol {
 //        }
 //        
 //        service.applyChanges()
+        movies.forEach { movie in
+            let entity = MovieModel(context: cache.managedObjectContext)
+            entity.uuid = UUID()
+            entity.id = Int64(movie.id ?? 0)
+            entity.title = movie.title ?? ""
+            entity.releaseDate = movie.releaseDate ?? ""
+            entity.posterPath = movie.posterPath ?? ""
+        }
+        
+        cache.save()
     }
 }

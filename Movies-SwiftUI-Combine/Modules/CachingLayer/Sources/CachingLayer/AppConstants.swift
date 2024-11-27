@@ -6,5 +6,5 @@
 //
 
 enum AppConstants {
-    static let CoreDataModelName = "Model"
+    static let CoreDataModelName = "AppModels"
 }

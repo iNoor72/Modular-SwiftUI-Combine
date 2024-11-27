@@ -40,10 +40,10 @@ public struct MovieDetailsResponse: Codable {
     
     public func toMovieDetailsModel(context: NSManagedObjectContext) -> MovieDetailsModel {
         let entity = MovieDetailsModel(context: context)
-        entity.id = Int16(id ?? 0)
+        entity.id = Int64(id ?? 0)
         entity.uuid = UUID()
         entity.title = title
-        entity.budget = Int16(budget ?? 0)
+        entity.budget = Int64(budget ?? 0)
         entity.posterPath = posterPath
         entity.releaseDate = releaseDate
         entity.backdropPath = backdropPath

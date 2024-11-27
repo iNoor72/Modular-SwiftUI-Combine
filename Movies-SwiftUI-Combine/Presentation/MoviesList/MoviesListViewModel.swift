@@ -156,11 +156,9 @@ final class MoviesListViewModel: ObservableObject {
                 }
                 
                 self?.totalPages = moviesResponse.totalPages ?? 1
-//                self?.dependencies.trendingMoviesUseCase.cache(self?.movies ?? [])
-//                if self?.state != .success {
+                self?.dependencies.trendingMoviesUseCase.cache(self?.movies ?? [])
                 self?.isLoading = false
-                    self?.state = .success
-//                }
+                self?.state = .success
             }).store(in: &cancellables)
     }
     
