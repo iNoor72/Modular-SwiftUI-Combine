@@ -30,6 +30,13 @@ struct MoviesListScreen: View {
                 viewModel.handle(.loadData)
             }), secondaryButton: .cancel())
         }
+        
+        .alert(isPresented: $viewModel.showErrorAlert) {
+            Alert(title: Text("Error"), message: Text(viewModel.error?.localizedDescription ?? ""), primaryButton: .default(Text("Retry"), action: {
+                viewModel.handle(.resetError)
+                viewModel.handle(.loadData)
+            }), secondaryButton: .cancel())
+        }
     }
     
     @ViewBuilder
@@ -89,7 +96,7 @@ extension MoviesListScreen {
         MoviesListScrollView(movies: movies) { movie in
             viewModel.handle(.navigateToDetails(movie))
         } onAppearAction: { movie in
-            viewModel.validatePagination(with: movie)
+            viewModel.handle(.paginate(movie))
         }
             .padding(.horizontal, Constants.contentSpacing)
     }

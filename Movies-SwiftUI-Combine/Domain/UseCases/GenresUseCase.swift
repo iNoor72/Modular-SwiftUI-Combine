@@ -10,7 +10,7 @@ import Combine
 import NetworkLayer
 
 public protocol GenresUseCase {
-    func execute() -> AnyPublisher<GenresResponse, NetworkError>
+    func execute() -> AnyPublisher<[GenreViewItem], NetworkError>
 }
 
 public final class GenresUseCaseImpl: GenresUseCase {
@@ -20,15 +20,15 @@ public final class GenresUseCaseImpl: GenresUseCase {
         self.genreRepository = genreRepository
     }
     
-    public func execute() -> AnyPublisher<GenresResponse, NetworkError> {
+    public func execute() -> AnyPublisher<[GenreViewItem], NetworkError> {
         genreRepository.fetchGenres()
     }
 }
 
 public final class GenresUseCaseMock: GenresUseCase {
-    public func execute() -> AnyPublisher<GenresResponse, NetworkError> {
-        Future<GenresResponse, NetworkError> { promise in
-            promise(.success(GenresResponse.dummyData))
+    public func execute() -> AnyPublisher<[GenreViewItem], NetworkError> {
+        Future<[GenreViewItem], NetworkError> { promise in
+            promise(.success([]))
         }.eraseToAnyPublisher()
     }
 }

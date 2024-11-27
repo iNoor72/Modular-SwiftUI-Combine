@@ -11,7 +11,7 @@ import NetworkLayer
 import CachingLayer
 
 public protocol TrendingMoviesUseCase {
-    func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<MoviesResponseViewItem?, NetworkError>
+    func execute(page: Int, genres: [GenreViewItem]) -> AnyPublisher<MoviesResponseViewItem?, NetworkError>
     func getCachedMovies() -> [MovieViewItem]
 }
 
@@ -23,7 +23,7 @@ public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
         self.moviesListRepository = moviesListRepository
     }
     
-    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<MoviesResponseViewItem?, NetworkError> {
+    public func execute(page: Int, genres: [GenreViewItem]) -> AnyPublisher<MoviesResponseViewItem?, NetworkError> {
         Future<MoviesResponseViewItem?, NetworkError> {[weak self] promise in
             guard let self else { return }
             
@@ -63,7 +63,7 @@ extension TrendingMoviesUseCaseImpl {
 }
 
 public final class TrendingMoviesUseCaseMock: TrendingMoviesUseCase {
-    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<MoviesResponseViewItem?, NetworkError> {
+    public func execute(page: Int, genres: [GenreViewItem]) -> AnyPublisher<MoviesResponseViewItem?, NetworkError> {
         Future<MoviesResponseViewItem?, NetworkError> { promise in
             promise(.success(nil))
         }.eraseToAnyPublisher()

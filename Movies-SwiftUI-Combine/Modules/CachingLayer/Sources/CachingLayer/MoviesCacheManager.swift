@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreData
+import SwiftUI
 
 public final class MoviesCacheManager {
     @MainActor public static let shared = MoviesCacheManager()
@@ -103,6 +104,8 @@ extension MoviesCacheManager: MovieCacheManagerProtocol {
                                                       managedObjectContext: managedObjectContext,
                                                       sectionNameKeyPath: nil,
                                                       cacheName: nil)
+        print(result.fetchedObjects)
+        print(result.fetchedObjects?.count)
         return result.fetchedObjects ?? []
     }
 }

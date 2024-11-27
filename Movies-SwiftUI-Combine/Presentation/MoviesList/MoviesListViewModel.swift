@@ -13,7 +13,9 @@ enum MoviesListEvents {
     case loadMoreData
     case search
     case clearSearch
-    case didSelectGenre(GenreItem)
+    case resetError
+    case paginate(MovieViewItem)
+    case didSelectGenre(GenreViewItem)
     case navigateToDetails(MovieViewItem)
 }
 
@@ -29,9 +31,9 @@ final class MoviesListViewModel: ObservableObject {
     @Published var searchQuery: String = ""
     @Published var debounceValue = ""
     @Published var isLoading = false
-    @Published var isNetworkConnectionLost = true
+    @Published var isNetworkConnectionLost = false
     @Published var movies: [MovieViewItem] = []
-    var error: Error?
+    
     private var page: Int = 1
     private var totalPages: Int = 1 {
         didSet {
@@ -41,12 +43,16 @@ final class MoviesListViewModel: ObservableObject {
     
     let monitor = NetworkMonitor()
     
-    var selectedGenres: [GenreItem] = []
+    var genres: [GenreViewItem] = []
+    var selectedGenres: [GenreViewItem] = []
     var searchedMovies: [MovieViewItem] = []
     var filteredMovies: [MovieViewItem] = []
-    var genres: [GenreItem] = []
+    
+    var error: Error?
+    var showErrorAlert = false
     var hasMoreRows = false
     var isSearching = false
+    
     private let dependencies: MoviesListDependencies
     private var cancellables = Set<AnyCancellable>()
     
@@ -69,6 +75,10 @@ final class MoviesListViewModel: ObservableObject {
             searchMovies()
         case .clearSearch:
             clearSearch()
+        case .resetError:
+            resetSearch()
+        case .paginate(let movie):
+            paginate(with: movie)
         case .didSelectGenre(let genre):
             didSelectGenreAction(genre: genre)
         case .navigateToDetails(let movieItem):
@@ -88,11 +98,16 @@ final class MoviesListViewModel: ObservableObject {
         fetchMovies(page: page)
     }
     
-    func validatePagination(with movie: MovieViewItem) {
+    private func paginate(with movie: MovieViewItem) {
         let movies = isSearching ? searchedMovies : movies
         if let lastMovie = movies.last, movie.id == lastMovie.id {
             loadMoreMovies()
         }
+    }
+    
+    private func resetSearch() {
+        error = nil
+        showErrorAlert = false
     }
     
     private func loadMoreMovies() {
@@ -109,13 +124,16 @@ final class MoviesListViewModel: ObservableObject {
         }
     }
     
-    private func didSelectGenreAction(genre: GenreItem) {
-        if selectedGenres.contains(genre) {
+    private func didSelectGenreAction(genre: GenreViewItem) {
+        guard let genreIndex = genres.firstIndex(where: { $0.id == genre.id }) else { return }
+        genres[genreIndex].isSelected.toggle()
+        
+        if genres[genreIndex].isSelected {
+            selectedGenres.append(genre)
+        } else {
             if let index = selectedGenres.firstIndex(where: { $0.id == genre.id }) {
                 selectedGenres.remove(at: index)
             }
-        } else {
-            selectedGenres.append(genre)
         }
         
         fetchMovies(page: page, genres: selectedGenres)
@@ -136,14 +154,14 @@ final class MoviesListViewModel: ObservableObject {
                     self.error = error
                     self.state = .failure
                 }
-            }, receiveValue: { [weak self] genresResponse in
-                self?.genres = genresResponse.genres ?? []
+            }, receiveValue: { [weak self] genres in
+                self?.genres = genres
                 self?.isLoading = false
                 self?.state = .success
             }).store(in: &cancellables)
     }
     
-    private func fetchMovies(page: Int = 1, genres: [GenreItem] = []) {
+    private func fetchMovies(page: Int = 1, genres: [GenreViewItem] = []) {
         isLoading = true
         
         dependencies.trendingMoviesUseCase.execute(page: page, genres: genres)

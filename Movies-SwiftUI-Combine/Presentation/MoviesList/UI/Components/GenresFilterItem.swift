@@ -8,28 +8,29 @@
 import SwiftUI
 
 struct GenresFilterItem: View {
-    var genre: GenreItem
-    var didSelectGenreAction: ((GenreItem) -> ())?
+    var genre: GenreViewItem
+    var didSelectGenreAction: ((GenreViewItem) -> ())?
     
     var body: some View {
-        Text(genre.name ?? "")
+        Text(genre.name)
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(.yellow, lineWidth: 1)
-            )
+            .background {
+                if genre.isSelected {
+                    Color.yellow
+                        .cornerRadius(16)
+                } else {
+                    Color.black
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(.yellow, lineWidth: 1)
+                        )
+                }
+            }
+            .padding(8)
+            .cornerRadius(16)
             .onTapGesture {
                 didSelectGenreAction?(genre)
             }
-            .padding(4)
-            .background {
-                if true {
-                    
-                } else {
-                    Color.black
-                }
-            }
-            .presentationCornerRadius(16)
     }
 }

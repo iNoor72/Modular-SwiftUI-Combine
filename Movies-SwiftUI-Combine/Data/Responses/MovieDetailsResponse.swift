@@ -25,7 +25,7 @@ public struct MovieDetailsResponse: Codable {
     public var spokenLanguages: [SpokenLanguageItem]?
     public let status: String?
     public let runtime: Int?
-    public let genres: [GenreItem]?
+    public let genres: [GenreResponseItem]?
     
     enum CodingKeys: String, CodingKey {
         case id, budget, status, runtime, genres, homepage, overview
