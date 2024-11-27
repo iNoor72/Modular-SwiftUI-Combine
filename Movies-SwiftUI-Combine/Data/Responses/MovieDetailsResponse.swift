@@ -57,15 +57,3 @@ public struct MovieDetailsResponse: Codable {
         return entity
     }
 }
-
-public struct SpokenLanguageItem: Codable {
-    public let name: String?
-    
-    public func toSpokenLanguageModel(context: NSManagedObjectContext) -> SpokenLanguageModel {
-        let entity = SpokenLanguageModel(context: context)
-        entity.name = name
-        entity.uuid = UUID()
-        
-        return entity
-    }
-}

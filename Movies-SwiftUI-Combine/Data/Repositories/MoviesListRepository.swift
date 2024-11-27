@@ -19,25 +19,21 @@ final class MoviesListRepository: MoviesListRepositoryProtocol {
         self.cache = cache
     }
     
-    func fetchMovies(with page: Int, genreIDs: [Int]) -> AnyPublisher<[MovieModel]?, NetworkError> {
+    func fetchMovies(with page: Int, genreIDs: [Int]) -> AnyPublisher<MoviesResponseModel?, NetworkError> {
         do {
             let endpoint = MoviesEndpoint.trending(page: page, genreIDs: genreIDs)
             return try network.fetch(endpoint: endpoint, expectedType: MoviesResponse.self)
                 .map { [weak self] in
-                    if let self {
-                        let movieModels = $0.results?.map {
-                            $0.toMovieModel(context: self.cache.managedObjectContext)
-                        }
-                        
-                        self.cache.save()
-                        return movieModels
-                    }
+                    guard let self else { return nil }
                     
-                    return nil
+                    let response = $0.toMoviesResponseModel(context: self.cache.managedObjectContext)
+                    
+                    self.cache.save()
+                    return response
                 }
                 .eraseToAnyPublisher()
         } catch {
-            return Future<[MovieModel]?, NetworkError> { promise in
+            return Future<MoviesResponseModel?, NetworkError> { promise in
                 promise(.failure(NetworkError.decodingError))
             }.eraseToAnyPublisher()
         }

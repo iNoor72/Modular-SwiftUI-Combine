@@ -21,7 +21,7 @@ final class MoviesListFactory: MoviesListFactoryProtocol {
         
         let genresRepository = GenresRepository(network: network)
         let moviesListRepository = MoviesListRepository(network: network, cache: cache)
-        let searchingRepository = SearchRepository(network: network)
+        let searchingRepository = SearchRepository(network: network, cache: cache)
         
         let genresUseCase = GenresUseCaseImpl(genreRepository: genresRepository)
         let trendingMoviesUseCase = TrendingMoviesUseCaseImpl(moviesListRepository: moviesListRepository)

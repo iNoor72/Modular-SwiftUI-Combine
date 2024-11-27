@@ -11,7 +11,7 @@ import NetworkLayer
 import CachingLayer
 
 public protocol TrendingMoviesUseCase {
-    func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<[MovieViewItem]?, NetworkError>
+    func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<MoviesResponseViewItem?, NetworkError>
     func getCachedMovies() -> [MovieViewItem]
 }
 
@@ -23,20 +23,20 @@ public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
         self.moviesListRepository = moviesListRepository
     }
     
-    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<[MovieViewItem]?, NetworkError> {
-        Future<[MovieViewItem]?, NetworkError> {[weak self] promise in
+    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<MoviesResponseViewItem?, NetworkError> {
+        Future<MoviesResponseViewItem?, NetworkError> {[weak self] promise in
             guard let self else { return }
             
             moviesListRepository
                 .fetchMovies(with: page, genreIDs: genres.compactMap { $0.id })
                 .receive(on: DispatchQueue.main)
                 .sink(receiveCompletion: { comp in
+                    promise(.failure(NetworkError.failedRequest))
+                }, receiveValue: { [weak self] movieResponse in
+                    guard let self, let movieResponse else { return }
                     
-                }, receiveValue: { movieModels in
-                    guard let movieModels else { return }
-                    
-                    let movies = movieModels.map(self.toMovieViewItem)
-                    promise(.success(movies))
+                    let response = toMoviesResponseViewItem(movieResponse)
+                    promise(.success(response))
                 })
                 .store(in: &cancellables)
         }
@@ -50,15 +50,22 @@ public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
 }
 
 extension TrendingMoviesUseCaseImpl {
+    private func toMoviesResponseViewItem(_ response: MoviesResponseModel) -> MoviesResponseViewItem? {
+        guard let movies = response.movies?.allObjects as? [MovieModel] else { return nil }
+        let movieItems = movies.map(toMovieViewItem)
+        
+        return MoviesResponseViewItem(totalPages: Int(response.totalPages), movies: movieItems)
+    }
+    
     private func toMovieViewItem(_ movie: MovieModel) -> MovieViewItem {
-        MovieViewItem(id: Int(movie.id), title: movie.title ?? "", releaseDate: movie.releaseDate ?? "", posterPath: movie.posterPath)
+        MovieViewItem(id: Int(movie.id), uuid: movie.uuid ?? UUID(), title: movie.title ?? "", releaseDate: movie.releaseDate ?? "", posterPath: movie.posterPath)
     }
 }
 
 public final class TrendingMoviesUseCaseMock: TrendingMoviesUseCase {
-    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<[MovieViewItem]?, NetworkError> {
-        Future<[MovieViewItem]?, NetworkError> { promise in
-            promise(.success([]))
+    public func execute(page: Int, genres: [GenreItem]) -> AnyPublisher<MoviesResponseViewItem?, NetworkError> {
+        Future<MoviesResponseViewItem?, NetworkError> { promise in
+            promise(.success(nil))
         }.eraseToAnyPublisher()
     }
     

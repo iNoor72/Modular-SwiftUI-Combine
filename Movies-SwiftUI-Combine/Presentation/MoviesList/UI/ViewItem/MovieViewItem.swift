@@ -9,6 +9,7 @@ import Foundation
 
 public struct MovieViewItem: Identifiable, Hashable {
     public let id: Int
+    let uuid: UUID
     let title: String
     let releaseDate: String
     let posterPath: String?

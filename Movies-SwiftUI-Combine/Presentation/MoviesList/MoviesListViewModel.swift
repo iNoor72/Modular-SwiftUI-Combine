@@ -158,14 +158,14 @@ final class MoviesListViewModel: ObservableObject {
                     self.error = error
                     self.state = .failure
                 }
-            }, receiveValue: { [weak self] fetchedMovies in
+            }, receiveValue: { [weak self] moviesResponse in
                 if genres.isEmpty {
-                    self?.movies.append(contentsOf: fetchedMovies ?? [])
+                    self?.movies.append(contentsOf: moviesResponse?.movies ?? [])
                 } else {
-                    self?.filteredMovies = fetchedMovies ?? []
+                    self?.filteredMovies = moviesResponse?.movies ?? []
                 }
                 
-                self?.totalPages = 400
+                self?.totalPages = moviesResponse?.totalPages ?? 1
                 self?.isLoading = false
                 self?.state = .success
             }).store(in: &cancellables)
@@ -189,24 +189,24 @@ final class MoviesListViewModel: ObservableObject {
             return
         }
         
-//        dependencies.searchUseCase.execute(page: page, query: searchQuery)
-//            .receive(on: DispatchQueue.main)
-//            .throttle(for: 3.0, scheduler: RunLoop.main, latest: true)
-//            .sink {[weak self] completion in
-//                guard let self else { return }
-//                
-//                switch completion {
-//                case .finished:
-//                    break
-//                case .failure(let error):
-//                    self.error = error
-//                    self.state = .failure
-//                }
-//            } receiveValue: {[weak self] fetchedMovies in
-//                self?.searchedMovies.append(contentsOf: fetchedMovies ?? [])
-////                self?.totalPages = response.totalPages ?? 1
-//                self?.isLoading = false
-//                self?.state = .success
-//            }.store(in: &cancellables)
+        dependencies.searchUseCase.execute(page: page, query: searchQuery)
+            .receive(on: DispatchQueue.main)
+            .throttle(for: 3.0, scheduler: RunLoop.main, latest: true)
+            .sink {[weak self] completion in
+                guard let self else { return }
+                
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    self.error = error
+                    self.state = .failure
+                }
+            } receiveValue: {[weak self] moviesResponse in
+                self?.searchedMovies.append(contentsOf: moviesResponse?.movies ?? [])
+                self?.totalPages = moviesResponse?.totalPages ?? 1
+                self?.isLoading = false
+                self?.state = .success
+            }.store(in: &cancellables)
     }
 }

@@ -19,32 +19,14 @@ public struct MoviesResponse: Codable {
     }
     
     static let dummyData = MoviesResponse(results: [], totalPages: nil)
-}
-
-public struct MoviesResponseItem: Codable, Hashable, Identifiable {
-    public let uuid = UUID()
-    public let id: Int?
-    public let title: String?
-    public var releaseDate: String? {
-        didSet {
-            releaseDate = releaseDate?.components(separatedBy: "-").first ?? ""
+    
+    func toMoviesResponseModel(context: NSManagedObjectContext) -> MoviesResponseModel {
+        let model = MoviesResponseModel(context: context)
+        model.totalPages = Int32(totalPages ?? 0)
+        let movieModels = results?.map { $0.toMovieModel(context: context)} ?? []
+        movieModels.forEach {
+            model.addToMovies($0)
         }
-    }
-    public let posterPath: String?
-    
-    enum CodingKeys: String, CodingKey {
-        case id, title
-        case releaseDate = "release_date"
-        case posterPath = "poster_path"
-    }
-    
-    public func toMovieModel(context: NSManagedObjectContext) -> MovieModel {
-        let model = MovieModel(context: context)
-        model.uuid = UUID()
-        model.id = Int64(id ?? 0)
-        model.title = title ?? ""
-        model.releaseDate = releaseDate ?? ""
-        model.posterPath = posterPath ?? ""
         
         return model
     }

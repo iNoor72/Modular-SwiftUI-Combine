@@ -27,7 +27,12 @@
         <attribute name="posterPath" optional="YES" attributeType="String"/>
         <attribute name="releaseDate" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
-        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="YES"/>
+        <relationship name="moviesResponse" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoviesResponseModel" inverseName="movies" inverseEntity="MoviesResponseModel"/>
+    </entity>
+    <entity name="MoviesResponseModel" representedClassName="MoviesResponseModel" syncable="YES" codeGenerationType="class">
+        <attribute name="totalPages" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="movies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MovieModel" inverseName="moviesResponse" inverseEntity="MovieModel"/>
     </entity>
     <entity name="SpokenLanguageModel" representedClassName="SpokenLanguageModel" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
