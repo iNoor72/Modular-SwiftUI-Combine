@@ -12,13 +12,13 @@ struct MoviesListScrollView: View {
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
-    let movies: [MoviesResponseItem]
-    let onItemClick: (MoviesResponseItem) -> Void
-    let onAppearAction: ((MoviesResponseItem) -> Void)
+    let movies: [MovieViewItem]
+    let onItemClick: (MovieViewItem) -> Void
+    let onAppearAction: ((MovieViewItem) -> Void)
     
     var body: some View {
         LazyVGrid(columns: columns) {
-            ForEach(movies, id: \.uuid) { movie in
+            ForEach(movies, id: \.id) { movie in
                 MovieCardView(movieItem: movie)
                     .onAppear {
                         onAppearAction(movie)

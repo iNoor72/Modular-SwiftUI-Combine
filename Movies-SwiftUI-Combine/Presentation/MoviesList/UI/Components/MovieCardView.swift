@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MovieCardView: View {
-    var movieItem: MoviesResponseItem
+    var movieItem: MovieViewItem
     
     var body: some View {
         HStack {
@@ -34,11 +34,11 @@ struct MovieCardView: View {
                 })
                 .frame(height: 250)
                 
-                Text(movieItem.title ?? "")
+                Text(movieItem.title)
                     .bold()
                     .foregroundStyle(.white)
                 
-                Text(movieItem.releaseDate ?? "")
+                Text(movieItem.releaseDate)
                     .foregroundStyle(.white)
             }
         }

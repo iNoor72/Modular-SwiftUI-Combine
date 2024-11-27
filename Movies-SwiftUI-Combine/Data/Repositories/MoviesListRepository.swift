@@ -19,38 +19,33 @@ final class MoviesListRepository: MoviesListRepositoryProtocol {
         self.cache = cache
     }
     
-    func fetchMovies(with page: Int, genreIDs: [Int]) -> AnyPublisher<MoviesResponse, NetworkError> {
+    func fetchMovies(with page: Int, genreIDs: [Int]) -> AnyPublisher<[MovieModel]?, NetworkError> {
         do {
             let endpoint = MoviesEndpoint.trending(page: page, genreIDs: genreIDs)
             return try network.fetch(endpoint: endpoint, expectedType: MoviesResponse.self)
+                .map { [weak self] in
+                    if let self {
+                        let movieModels = $0.results?.map {
+                            $0.toMovieModel(context: self.cache.managedObjectContext)
+                        }
+                        
+                        self.cache.save()
+                        return movieModels
+                    }
+                    
+                    return nil
+                }
                 .eraseToAnyPublisher()
         } catch {
-            return Future<MoviesResponse, NetworkError> { promise in
+            return Future<[MovieModel]?, NetworkError> { promise in
                 promise(.failure(NetworkError.decodingError))
             }.eraseToAnyPublisher()
         }
     }
     
-    func cacheMovies(_ movies: [MoviesResponseItem]) {
-//        movies.forEach { movie in
-//            let entity = MovieModel(context: cache.managedObjectContext)
-//            entity.id = Int16(movie.id ?? 0)
-//            entity.title = movie.title ?? ""
-//            entity.releaseDate = movie.releaseDate ?? ""
-//            entity.posterPath = movie.posterPath ?? ""
-//            service.add(movie: entity)
-//        }
-//        
-//        service.applyChanges()
-        movies.forEach { movie in
-            let entity = MovieModel(context: cache.managedObjectContext)
-            entity.uuid = UUID()
-            entity.id = Int64(movie.id ?? 0)
-            entity.title = movie.title ?? ""
-            entity.releaseDate = movie.releaseDate ?? ""
-            entity.posterPath = movie.posterPath ?? ""
-        }
-        
-        cache.save()
+    func getCachedMovies() -> [MovieModel] {
+        let request = MovieModel.fetchRequest()
+        request.sortDescriptors = []
+        return cache.fetch(MovieModel.self, with: request) as! [MovieModel]
     }
 }

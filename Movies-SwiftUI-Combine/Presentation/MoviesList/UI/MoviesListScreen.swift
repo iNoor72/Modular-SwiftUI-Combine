@@ -25,6 +25,11 @@ struct MoviesListScreen: View {
         .onChange(of: viewModel.debounceValue) { _ in
             viewModel.handle(.search)
         }
+        .alert(isPresented: $viewModel.isNetworkConnectionLost) {
+            Alert(title: Text("Error"), message: Text(AppStrings.noNetworkAlertMessage), primaryButton: .default(Text("Retry"), action: {
+                viewModel.handle(.loadData)
+            }), secondaryButton: .cancel())
+        }
     }
     
     @ViewBuilder
@@ -44,7 +49,6 @@ struct MoviesListScreen: View {
         }
     }
 }
-
 
 extension MoviesListScreen {
     @ViewBuilder
@@ -81,7 +85,7 @@ extension MoviesListScreen {
             .frame(height: 40)
     }
     
-    private func moviesListView(movies: [MoviesResponseItem]) -> some View {
+    private func moviesListView(movies: [MovieViewItem]) -> some View {
         MoviesListScrollView(movies: movies) { movie in
             viewModel.handle(.navigateToDetails(movie))
         } onAppearAction: { movie in

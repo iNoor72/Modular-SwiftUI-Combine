@@ -97,4 +97,12 @@ extension MoviesCacheManager: MovieCacheManagerProtocol {
     public func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: String) -> T? {
         return nil
     }
+    
+    public func fetch<T: NSManagedObject>(_ type: T.Type, with request: NSFetchRequest<T>) -> [NSFetchRequestResult] {
+        let result = NSFetchedResultsController(fetchRequest: request,
+                                                      managedObjectContext: managedObjectContext,
+                                                      sectionNameKeyPath: nil,
+                                                      cacheName: nil)
+        return result.fetchedObjects ?? []
+    }
 }

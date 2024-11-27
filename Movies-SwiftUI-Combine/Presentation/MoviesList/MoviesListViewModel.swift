@@ -14,7 +14,7 @@ enum MoviesListEvents {
     case search
     case clearSearch
     case didSelectGenre(GenreItem)
-    case navigateToDetails(MoviesResponseItem)
+    case navigateToDetails(MovieViewItem)
 }
 
 enum MoviesListScreenState: Int {
@@ -29,7 +29,8 @@ final class MoviesListViewModel: ObservableObject {
     @Published var searchQuery: String = ""
     @Published var debounceValue = ""
     @Published var isLoading = false
-    @Published var movies: [MoviesResponseItem] = []
+    @Published var isNetworkConnectionLost = true
+    @Published var movies: [MovieViewItem] = []
     var error: Error?
     private var page: Int = 1
     private var totalPages: Int = 1 {
@@ -38,9 +39,11 @@ final class MoviesListViewModel: ObservableObject {
         }
     }
     
+    let monitor = NetworkMonitor()
+    
     var selectedGenres: [GenreItem] = []
-    var searchedMovies: [MoviesResponseItem] = []
-    var filteredMovies: [MoviesResponseItem] = []
+    var searchedMovies: [MovieViewItem] = []
+    var filteredMovies: [MovieViewItem] = []
     var genres: [GenreItem] = []
     var hasMoreRows = false
     var isSearching = false
@@ -74,11 +77,18 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func onAppear() {
+        guard monitor.isConnected else {
+            isNetworkConnectionLost = true
+            movies = dependencies.trendingMoviesUseCase.getCachedMovies()
+            return
+        }
+        
+        isNetworkConnectionLost = false
         fetchGenres()
         fetchMovies(page: page)
     }
     
-    func validatePagination(with movie: MoviesResponseItem) {
+    func validatePagination(with movie: MovieViewItem) {
         let movies = isSearching ? searchedMovies : movies
         if let lastMovie = movies.last, movie.id == lastMovie.id {
             loadMoreMovies()
@@ -148,15 +158,14 @@ final class MoviesListViewModel: ObservableObject {
                     self.error = error
                     self.state = .failure
                 }
-            }, receiveValue: { [weak self] moviesResponse in
+            }, receiveValue: { [weak self] fetchedMovies in
                 if genres.isEmpty {
-                    self?.movies.append(contentsOf: moviesResponse.results ?? [])
+                    self?.movies.append(contentsOf: fetchedMovies ?? [])
                 } else {
-                    self?.filteredMovies = moviesResponse.results ?? []
+                    self?.filteredMovies = fetchedMovies ?? []
                 }
                 
-                self?.totalPages = moviesResponse.totalPages ?? 1
-                self?.dependencies.trendingMoviesUseCase.cache(self?.movies ?? [])
+                self?.totalPages = 400
                 self?.isLoading = false
                 self?.state = .success
             }).store(in: &cancellables)
@@ -180,24 +189,24 @@ final class MoviesListViewModel: ObservableObject {
             return
         }
         
-        dependencies.searchUseCase.execute(page: page, query: searchQuery)
-            .receive(on: DispatchQueue.main)
-            .throttle(for: 3.0, scheduler: RunLoop.main, latest: true)
-            .sink {[weak self] completion in
-                guard let self else { return }
-                
-                switch completion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    self.error = error
-                    self.state = .failure
-                }
-            } receiveValue: {[weak self] response in
-                self?.searchedMovies.append(contentsOf: response.results ?? [])
-                self?.totalPages = response.totalPages ?? 1
-                self?.isLoading = false
-                self?.state = .success
-            }.store(in: &cancellables)
+//        dependencies.searchUseCase.execute(page: page, query: searchQuery)
+//            .receive(on: DispatchQueue.main)
+//            .throttle(for: 3.0, scheduler: RunLoop.main, latest: true)
+//            .sink {[weak self] completion in
+//                guard let self else { return }
+//                
+//                switch completion {
+//                case .finished:
+//                    break
+//                case .failure(let error):
+//                    self.error = error
+//                    self.state = .failure
+//                }
+//            } receiveValue: {[weak self] fetchedMovies in
+//                self?.searchedMovies.append(contentsOf: fetchedMovies ?? [])
+////                self?.totalPages = response.totalPages ?? 1
+//                self?.isLoading = false
+//                self?.state = .success
+//            }.store(in: &cancellables)
     }
 }
