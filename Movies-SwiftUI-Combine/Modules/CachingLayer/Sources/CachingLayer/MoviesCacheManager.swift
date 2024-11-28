@@ -61,6 +61,13 @@ public final class MoviesCacheManager {
 }
 
 extension MoviesCacheManager: MovieCacheManagerProtocol {
+    public func addObject(_ object: NSManagedObject) {
+        if didMovieModelsExceedMaxLimit() {
+            //Delete 1st object
+//            guard let firstModel = managedObjectContext.fetch(object.fetc)
+        }
+    }
+    
     public func save() {
         if managedObjectContext.hasChanges {
             do {
@@ -72,30 +79,25 @@ extension MoviesCacheManager: MovieCacheManagerProtocol {
     }
     
     public func clearCache() {
+        managedObjectContext.insertedObjects.forEach {
+            managedObjectContext.delete($0)
+        }
+        
+        save()
+    }
+    
+    public func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: NSManagedObjectID) -> T? {
         do {
-            managedObjectContext.insertedObjects.forEach {
-                managedObjectContext.delete($0)
+            let request = type.fetchRequest()
+            let objects = try managedObjectContext.fetch(request) as! [T]
+            if let objectToDelete = objects.first(where: { $0.objectID === id }) {
+                managedObjectContext.delete(objectToDelete)
+                save()
             }
-            
-            try managedObjectContext.save()
         } catch {
             NSLog("Unresolved error deleting then saving context: \(error)")
         }
-    }
-    
-    public func fetchAllObjects<T: NSManagedObject>(_ type: T.Type) -> [NSFetchRequestResult] {
-        let fetchRequest = type.fetchRequest()
-        let result = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                      managedObjectContext: managedObjectContext,
-                                                      sectionNameKeyPath: nil,
-                                                      cacheName: nil)
-        return result.fetchedObjects ?? []
-    }
-    
-    public func fetchObject<T: NSManagedObject>(_ type: T.Type, with id: String) -> T? {
-        return nil
-    }
-    public func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: String) -> T? {
+        
         return nil
     }
     
@@ -104,8 +106,15 @@ extension MoviesCacheManager: MovieCacheManagerProtocol {
             let result = try managedObjectContext.fetch(request)
             return result
         } catch {
-            print(error.localizedDescription)
+            NSLog("Unresolved error fetchin from context: \(error)")
             return []
         }
+    }
+}
+
+extension MoviesCacheManager {
+    private func didMovieModelsExceedMaxLimit() -> Bool {
+        let modelsCount = managedObjectContext.registeredObjects.count
+        return modelsCount >= AppConstants.maxCachedMoviesCount
     }
 }

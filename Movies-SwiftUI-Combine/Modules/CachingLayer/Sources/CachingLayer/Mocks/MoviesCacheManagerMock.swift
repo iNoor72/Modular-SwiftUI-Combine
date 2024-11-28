@@ -9,39 +9,33 @@ import Foundation
 import CoreData
 
 public final class MoviesCacheManagerMock {
-    @MainActor public static let shared = MoviesCacheManagerMock()
+    nonisolated(unsafe) public static let shared = MoviesCacheManagerMock()
     
+    public var managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
     public var isSavedCalled: Bool = false
+    public var data: [String] = []
     
     private init() {}
 }
 
 extension MoviesCacheManagerMock: MovieCacheManagerProtocol {
-    public var managedObjectContext: NSManagedObjectContext {
-        NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+    public func addObject(_ object: NSManagedObject) {
+        data.append("")
     }
     
+    public func fetch<T>(_ type: T.Type, with request: NSFetchRequest<T>) -> [T] where T : NSManagedObject {
+        []
+    }
+
     public func save() {
         isSavedCalled = true
     }
     
-    public func fetchAllObjects<T>(_ type: T.Type) -> [any NSFetchRequestResult] where T : NSManagedObject {
-        []
-    }
-    
-    public func fetchObject<T>(_ type: T.Type, with id: String) -> T? where T : NSManagedObject {
-        nil
-    }
-    
-    public func deleteObject<T>(_ type: T.Type, with id: String) -> T? where T : NSManagedObject {
+    public func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: NSManagedObjectID) throws -> T? {
         nil
     }
     
     public func clearCache() {
         isSavedCalled = false
-    }
-    
-    public func fetch<T>(_ type: T.Type, with request: NSFetchRequest<T>) -> [T] where T : NSManagedObject {
-        []
     }
 }

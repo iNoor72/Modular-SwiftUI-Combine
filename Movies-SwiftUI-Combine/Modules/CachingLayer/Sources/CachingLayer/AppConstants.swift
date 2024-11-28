@@ -7,4 +7,5 @@
 
 enum AppConstants {
     static let CoreDataModelName = "AppModels"
+    static let maxCachedMoviesCount = 500
 }

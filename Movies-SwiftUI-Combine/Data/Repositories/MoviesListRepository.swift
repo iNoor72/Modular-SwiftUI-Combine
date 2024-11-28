@@ -41,7 +41,6 @@ final class MoviesListRepository: MoviesListRepositoryProtocol {
     
     func getCachedMovies() -> [MovieModel] {
         let request = MovieModel.fetchRequest()
-        request.sortDescriptors = []
-        return cache.fetch(MovieModel.self, with: request) as! [MovieModel]
+        return cache.fetch(MovieModel.self, with: request) 
     }
 }
