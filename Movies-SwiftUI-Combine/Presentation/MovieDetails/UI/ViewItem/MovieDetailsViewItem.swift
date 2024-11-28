@@ -13,11 +13,7 @@ public struct MovieDetailsViewItem: Identifiable, Hashable {
     public let title: String?
     public let budget: Int?
     public let posterPath: String?
-    public var releaseDate: String? {
-        didSet {
-            releaseDate = releaseDate?.components(separatedBy: "-").first ?? ""
-        }
-    }
+    public var releaseDate: String?
     public let backdropPath: String?
     public let overview: String?
     public let homepage: String?

@@ -60,7 +60,7 @@ extension MovieDetailsUseCaseImpl {
             title: movieDetails.title,
             budget: Int(movieDetails.budget),
             posterPath: movieDetails.posterPath,
-            releaseDate: movieDetails.releaseDate,
+            releaseDate: movieDetails.releaseDate?.components(separatedBy: "-").first ?? "",
             backdropPath: movieDetails.backdropPath,
             overview: movieDetails.overview,
             homepage: movieDetails.homepage,

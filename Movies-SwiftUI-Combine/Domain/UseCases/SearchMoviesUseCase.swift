@@ -55,7 +55,13 @@ extension SearchMoviesUseCaseImpl {
     }
     
     private func toMovieViewItem(_ movie: MovieModel) -> MovieViewItem {
-        MovieViewItem(id: Int(movie.id), uuid: movie.uuid ?? UUID(), title: movie.title ?? "", releaseDate: movie.releaseDate ?? "", posterPath: movie.posterPath)
+        MovieViewItem(
+            id: Int(movie.id),
+            uuid: movie.uuid ?? UUID(),
+            title: movie.title ?? "",
+            releaseDate: movie.releaseDate?.components(separatedBy: "-").first ?? "",
+            posterPath: movie.posterPath
+        )
     }
 }
 
