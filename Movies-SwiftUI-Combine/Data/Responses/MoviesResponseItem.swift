@@ -13,11 +13,7 @@ public struct MoviesResponseItem: Codable, Hashable, Identifiable {
     public let uuid = UUID()
     public let id: Int?
     public let title: String?
-    public var releaseDate: String? {
-        didSet {
-            releaseDate = releaseDate?.components(separatedBy: "-").first ?? ""
-        }
-    }
+    public var releaseDate: String?
     public let posterPath: String?
     
     enum CodingKeys: String, CodingKey {

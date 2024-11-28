@@ -11,6 +11,10 @@ public struct MovieViewItem: Identifiable, Hashable {
     public let id: Int
     let uuid: UUID
     let title: String
-    let releaseDate: String
+    var releaseDate: String {
+        didSet {
+            releaseDate = releaseDate.components(separatedBy: "-").first ?? ""
+        }
+    }
     let posterPath: String?
 }

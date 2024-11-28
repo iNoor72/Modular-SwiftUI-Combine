@@ -21,7 +21,7 @@ enum MovieDetailsScreenState {
 
 final class MovieDetailsViewModel: ObservableObject {
     @Published var state: MovieDetailsScreenState = .initial
-    @Published var movieDetails: MovieDetailsResponse?
+    @Published var movieDetails: MovieDetailsViewItem?
     
     private let movieDetailsUseCase: MovieDetailsUseCase
     private let movieId: Int

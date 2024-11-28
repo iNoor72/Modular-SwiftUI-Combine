@@ -99,7 +99,7 @@ extension MovieDetailsScreen {
     }
     
     private var movieInfoView: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        LazyVStack(alignment: .leading, spacing: 4) {
             LazyHStack {
                 Text("Homepage:")
                     .bold()
@@ -113,7 +113,7 @@ extension MovieDetailsScreen {
                     .bold()
                     .foregroundStyle(.white)
                 
-                Text(viewModel.movieDetails?.spokenLanguages?.map { $0.name ?? "" }.joined(separator: ", ") ?? "")
+                Text(viewModel.movieDetails?.spokenLanguages?.map { $0.name }.joined(separator: ", ") ?? "")
                     .lineLimit(3)
             }
         }
