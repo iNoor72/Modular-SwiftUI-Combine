@@ -12,11 +12,13 @@ final class MovieDetailsViewModelTests: XCTestCase {
     var sut: MovieDetailsViewModel!
     
     override func setUp() {
+        super.setUp()
         sut = MovieDetailsViewModel(movieId: 1, movieDetailsUseCase: MovieDetailsUseCaseMock())
     }
     
     override func tearDown() {
         sut = nil
+        super.tearDown()
     }
     
     func test_loadData() {

@@ -13,11 +13,13 @@ final class MoviesListFactoryTests: XCTestCase {
     var sut: MoviesListFactoryProtocol!
     
     override func setUp() {
+        super.setUp()
         sut = MoviesListFactory()
     }
     
     override func tearDown() {
         sut = nil
+        super.tearDown()
     }
     
     func test_makeFactory() {

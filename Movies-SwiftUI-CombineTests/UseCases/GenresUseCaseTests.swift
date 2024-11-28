@@ -14,6 +14,7 @@ final class GenresUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable>!
     
     override func setUp() {
+        super.setUp()
         sut = GenresUseCaseMock()
         cancellables = []
     }
@@ -21,6 +22,7 @@ final class GenresUseCaseTests: XCTestCase {
     override func tearDown() {
         sut = nil
         cancellables = nil
+        super.tearDown()
     }
     
     func test_execute() {

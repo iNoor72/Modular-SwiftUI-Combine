@@ -16,6 +16,7 @@ final class MovieDetailsRepositoryTests: XCTestCase {
     private var cancellables: Set<AnyCancellable>!
     
     override func setUp() {
+        super.setUp()
         sut = MovieDetailsRepository(network: MockNetworkManager.shared, cache: MoviesCacheManagerMock.shared)
         cancellables = []
     }
@@ -23,6 +24,7 @@ final class MovieDetailsRepositoryTests: XCTestCase {
     override func tearDown() {
         sut = nil
         cancellables = nil
+        super.tearDown()
     }
     
     func test_fetchMovieDetails() {

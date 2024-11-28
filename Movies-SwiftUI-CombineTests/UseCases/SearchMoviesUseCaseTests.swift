@@ -14,6 +14,7 @@ final class SearchMoviesUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable>!
     
     override func setUp() {
+        super.setUp()
         sut = SearchMoviesUseCaseMock()
         cancellables = []
     }
@@ -21,6 +22,7 @@ final class SearchMoviesUseCaseTests: XCTestCase {
     override func tearDown() {
         sut = nil
         cancellables = nil
+        super.tearDown()
     }
     
     func test_execute() {

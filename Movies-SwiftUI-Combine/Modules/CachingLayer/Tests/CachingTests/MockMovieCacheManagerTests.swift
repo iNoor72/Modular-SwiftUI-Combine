@@ -14,11 +14,13 @@ final class MockMovieCacheManagerTests: XCTestCase {
     var sut: MovieCacheManagerProtocol!
 
     override func setUp() {
+        super.setUp()
         sut = MoviesCacheManagerMock.shared
     }
     
     override func tearDown() {
         sut = nil
+        super.tearDown()
     }
     
     func test_save() {

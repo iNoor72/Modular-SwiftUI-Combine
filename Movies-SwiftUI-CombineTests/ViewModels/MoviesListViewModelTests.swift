@@ -12,12 +12,14 @@ final class MoviesListViewModelTests: XCTestCase {
     var sut: MoviesListViewModel!
     
     override func setUp() {
+        super.setUp()
         let dep = MoviesListDependencies(router: MoviesListRouter(), genresUseCase: GenresUseCaseMock(), trendingMoviesUseCase: TrendingMoviesUseCaseMock(), searchUseCase: SearchMoviesUseCaseMock(), networkMonitor: MockNetworkMonitor())
         sut = MoviesListViewModel(dependencies: dep)
     }
     
     override func tearDown() {
         sut = nil
+        super.tearDown()
     }
     
     func test_fetchMovies() {
