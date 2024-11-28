@@ -41,8 +41,6 @@ final class MoviesListViewModel: ObservableObject {
         }
     }
     
-    let monitor = NetworkMonitor()
-    
     var genres: [GenreViewItem] = []
     var selectedGenres: [GenreViewItem] = []
     var searchedMovies: [MovieViewItem] = []
@@ -87,6 +85,11 @@ final class MoviesListViewModel: ObservableObject {
     
     private func onAppear() {
         checkNetworkConnection()
+     
+        fetchGenres()
+        fetchMovies(page: page)
+    }
+    
     private func checkNetworkConnection() {
         guard dependencies.networkMonitor.isConnected else {
             isNetworkConnectionLost = true
