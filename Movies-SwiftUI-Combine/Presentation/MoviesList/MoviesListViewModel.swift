@@ -61,7 +61,6 @@ final class MoviesListViewModel: ObservableObject {
         $searchQuery
             .debounce(for: 1.0, scheduler: RunLoop.main)
             .assign(to: &$debounceValue)
-        handle(.loadData)
     }
     
     func handle(_ event: MoviesListEvents) {
@@ -87,15 +86,13 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func onAppear() {
-        guard monitor.isConnected else {
+        checkNetworkConnection()
+    private func checkNetworkConnection() {
+        guard dependencies.networkMonitor.isConnected else {
             isNetworkConnectionLost = true
             movies = dependencies.trendingMoviesUseCase.getCachedMovies()
             return
         }
-        
-        isNetworkConnectionLost = false
-        fetchGenres()
-        fetchMovies(page: page)
     }
     
     private func paginate(with movie: MovieViewItem) {
@@ -111,6 +108,8 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func loadMoreMovies() {
+        checkNetworkConnection()
+        
         guard hasMoreRows else {
             return
         }
@@ -140,6 +139,8 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func fetchGenres() {
+        checkNetworkConnection()
+        
         isLoading = true
         
         dependencies.genresUseCase.execute()
@@ -162,6 +163,8 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func fetchMovies(page: Int = 1, genres: [GenreViewItem] = []) {
+        checkNetworkConnection()
+        
         isLoading = true
         
         dependencies.trendingMoviesUseCase.execute(page: page, genres: genres)
@@ -199,6 +202,8 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func searchMovies(page: Int = 1) {
+        checkNetworkConnection()
+        
         isSearching = true
         isLoading = true
         

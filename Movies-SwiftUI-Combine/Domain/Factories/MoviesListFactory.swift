@@ -18,6 +18,7 @@ final class MoviesListFactory: MoviesListFactoryProtocol {
     func make() -> UIViewController {
         let network = NetworkManager.shared
         let cache = MoviesCacheManager.shared
+        let networkMonitor = NetworkMonitor.shared
         
         let genresRepository = GenresRepository(network: network)
         let moviesListRepository = MoviesListRepository(network: network, cache: cache)
@@ -33,7 +34,8 @@ final class MoviesListFactory: MoviesListFactoryProtocol {
             router: router,
             genresUseCase: genresUseCase,
             trendingMoviesUseCase: trendingMoviesUseCase,
-            searchUseCase: searchMoviesUseCase
+            searchUseCase: searchMoviesUseCase,
+            networkMonitor: networkMonitor
         )
         
         let moviesListViewModel = MoviesListViewModel(dependencies: viewModelDependencies)
@@ -54,4 +56,5 @@ struct MoviesListDependencies {
     let genresUseCase: GenresUseCase
     let trendingMoviesUseCase: TrendingMoviesUseCase
     let searchUseCase: SearchMoviesUseCase
+    let networkMonitor: NetworkMonitorProtocol
 }

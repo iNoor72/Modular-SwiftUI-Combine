@@ -8,12 +8,18 @@
 import Foundation
 import Network
 
-class NetworkMonitor: ObservableObject {
+protocol NetworkMonitorProtocol {
+    var isConnected: Bool { get }
+}
+
+public class NetworkMonitor: NetworkMonitorProtocol, ObservableObject {
+    public static let shared = NetworkMonitor()
+    
     private let networkMonitor = NWPathMonitor()
     private let workerQueue = DispatchQueue(label: "NetworkMonitor")
-    var isConnected = false
+    @Published var isConnected = false
 
-    init() {
+    private init() {
         networkMonitor.pathUpdateHandler = { path in
             self.isConnected = path.status == .satisfied
             Task {
