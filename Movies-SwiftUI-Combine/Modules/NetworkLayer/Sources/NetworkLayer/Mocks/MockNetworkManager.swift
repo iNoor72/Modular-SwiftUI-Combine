@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 public class MockNetworkManager: NetworkServiceProtocol {
-    @MainActor public static let shared = MockNetworkManager()
+    nonisolated(unsafe) public static let shared = MockNetworkManager()
     private init() {}
     
     public func fetch<T: Decodable, U: Endpoint>(endpoint: U, expectedType: T.Type) throws -> AnyPublisher<T, NetworkError> {

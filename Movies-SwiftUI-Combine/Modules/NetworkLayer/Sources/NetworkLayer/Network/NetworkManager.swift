@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 public final class NetworkManager: NetworkServiceProtocol {
-    @MainActor public static let shared = NetworkManager()
+    nonisolated(unsafe) public static let shared = NetworkManager()
     private init() {}
     
     public func fetch<T: Decodable, U: Endpoint>(

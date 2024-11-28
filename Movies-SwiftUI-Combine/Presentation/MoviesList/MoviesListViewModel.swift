@@ -73,7 +73,7 @@ final class MoviesListViewModel: ObservableObject {
         case .clearSearch:
             clearSearch()
         case .resetError:
-            resetSearch()
+            resetErrors()
         case .paginate(let movie):
             paginate(with: movie)
         case .didSelectGenre(let genre):
@@ -84,18 +84,21 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func onAppear() {
-        checkNetworkConnection()
+        guard checkNetworkConnection() else { return }
      
         fetchGenres()
         fetchMovies(page: page)
     }
     
-    private func checkNetworkConnection() {
+    private func checkNetworkConnection() -> Bool {
         guard dependencies.networkMonitor.isConnected else {
             isNetworkConnectionLost = true
             movies = dependencies.trendingMoviesUseCase.getCachedMovies()
-            return
+            state = .success
+            return false
         }
+        
+        return true
     }
     
     private func paginate(with movie: MovieViewItem) {
@@ -105,7 +108,7 @@ final class MoviesListViewModel: ObservableObject {
         }
     }
     
-    private func resetSearch() {
+    private func resetErrors() {
         error = nil
         showErrorAlert = false
     }
@@ -200,6 +203,7 @@ final class MoviesListViewModel: ObservableObject {
         selectedGenres = []
         searchedMovies = []
         searchQuery = ""
+        debounceValue = ""
         isSearching = false
         state = .success
     }

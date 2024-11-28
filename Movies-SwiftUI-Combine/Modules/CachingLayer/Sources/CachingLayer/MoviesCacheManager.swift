@@ -99,13 +99,13 @@ extension MoviesCacheManager: MovieCacheManagerProtocol {
         return nil
     }
     
-    public func fetch<T: NSManagedObject>(_ type: T.Type, with request: NSFetchRequest<T>) -> [NSFetchRequestResult] {
-        let result = NSFetchedResultsController(fetchRequest: request,
-                                                      managedObjectContext: managedObjectContext,
-                                                      sectionNameKeyPath: nil,
-                                                      cacheName: nil)
-        print(result.fetchedObjects)
-        print(result.fetchedObjects?.count)
-        return result.fetchedObjects ?? []
+    public func fetch<T: NSManagedObject>(_ type: T.Type, with request: NSFetchRequest<T>) -> [T] {
+        do {
+            let result = try managedObjectContext.fetch(request)
+            return result
+        } catch {
+            print(error.localizedDescription)
+            return []
+        }
     }
 }
