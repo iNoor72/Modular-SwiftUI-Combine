@@ -9,6 +9,8 @@ import UIKit
 import SwiftUI
 
 protocol MoviesListRouterProtocol {
+    var viewController: UIViewController? { get }
+    
     func navigate(to destination: MoviesListDestination)
 }
 

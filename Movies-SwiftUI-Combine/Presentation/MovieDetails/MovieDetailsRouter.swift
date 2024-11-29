@@ -13,6 +13,8 @@ enum MovieDetailsDestination {
 }
 
 protocol MovieDetailsRouterProtocol {
+    var viewController: UIViewController? { get }
+    
     func navigate(to destination: MovieDetailsDestination)
 }
 

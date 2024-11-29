@@ -14,7 +14,7 @@ public enum MovieDetailsEndpoint: Endpoint {
     public var path: String {
         switch self {
         case .movieDetails(let id):
-            return "movie/\(id)"
+            return "/movie/\(id)"
         }
     }
     
