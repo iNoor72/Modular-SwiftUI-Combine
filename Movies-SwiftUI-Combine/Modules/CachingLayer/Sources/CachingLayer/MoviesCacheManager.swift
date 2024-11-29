@@ -61,7 +61,7 @@ public final class MoviesCacheManager {
 }
 
 extension MoviesCacheManager: MovieCacheManagerProtocol {
-    public func addObject(_ object: NSManagedObject) {
+    public func addObject(_ object: NSManagedObject?) {
         if didMovieModelsExceedMaxLimit() {
             //Delete 1st object
 //            guard let firstModel = managedObjectContext.fetch(object.fetc)

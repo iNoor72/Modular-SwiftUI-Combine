@@ -27,16 +27,16 @@ struct MoviesListScreen: View {
         }
         .alert(isPresented: $viewModel.isNetworkConnectionLost) {
             Alert(title: Text("Error"), message: Text(AppStrings.noNetworkAlertMessage), primaryButton: .default(Text("Retry"), action: {
-                viewModel.handle(.loadData)
+                viewModel.handle(.retryAction)
             }), secondaryButton: .cancel())
         }
         
-        .alert(isPresented: $viewModel.showErrorAlert) {
-            Alert(title: Text("Error"), message: Text(viewModel.error?.localizedDescription ?? ""), primaryButton: .default(Text("Retry"), action: {
-                viewModel.handle(.resetError)
-                viewModel.handle(.loadData)
-            }), secondaryButton: .cancel())
-        }
+//        .alert(isPresented: $viewModel.showErrorAlert) {
+//            Alert(title: Text("Error"), message: Text(viewModel.error?.localizedDescription ?? ""), primaryButton: .default(Text("Retry"), action: {
+//                viewModel.handle(.resetError)
+//                viewModel.handle(.loadData)
+//            }), secondaryButton: .cancel())
+//        }
     }
     
     @ViewBuilder
@@ -51,7 +51,7 @@ struct MoviesListScreen: View {
             RetryView {
                 viewModel.handle(.loadData)
             }
-        case .success, .searching:
+        case .success, .searching, .offline:
             contentView
         }
     }

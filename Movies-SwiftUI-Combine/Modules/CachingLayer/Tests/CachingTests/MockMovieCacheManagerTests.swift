@@ -30,9 +30,9 @@ final class MockMovieCacheManagerTests: XCTestCase {
     }
     
     func test_addObject() {
-//        sut.addObject(MovieModel(context: sut.managedObjectContext))
-//        
-//        XCTAssertEqual((sut as! MoviesCacheManagerMock).data.count, 1)
+        sut.addObject(nil)
+        
+        XCTAssertEqual((sut as! MoviesCacheManagerMock).data.count, 1)
     }
     
     func test_fetch() {

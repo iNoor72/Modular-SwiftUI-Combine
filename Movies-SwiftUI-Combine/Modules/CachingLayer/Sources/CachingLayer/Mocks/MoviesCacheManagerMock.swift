@@ -19,7 +19,7 @@ public final class MoviesCacheManagerMock {
 }
 
 extension MoviesCacheManagerMock: MovieCacheManagerProtocol {
-    public func addObject(_ object: NSManagedObject) {
+    public func addObject(_ object: NSManagedObject?) {
         data.append("")
     }
     

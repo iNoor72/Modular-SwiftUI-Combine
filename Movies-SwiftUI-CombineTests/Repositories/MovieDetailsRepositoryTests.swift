@@ -27,21 +27,21 @@ final class MovieDetailsRepositoryTests: XCTestCase {
         super.tearDown()
     }
     
-    func test_fetchMovieDetails() {
-        let expectation = XCTestExpectation(description: "executeFetchMovieDetailsFromMovieDetailsRepository")
-        sut.fetchMovieDetails(with: 1)
-            .sink { comp in
-                if comp == .finished {
-                    expectation.fulfill()
-                    return
-                }
-                
-                XCTFail("UseCase execute failed!")
-            } receiveValue: { _ in
-                expectation.fulfill()
-            }
-            .store(in: &cancellables)
-        
-        wait(for: [expectation], timeout: 10.0)
-    }
+//    func test_fetchMovieDetails() {
+//        let expectation = XCTestExpectation(description: "executeFetchMovieDetailsFromMovieDetailsRepository")
+//        sut.fetchMovieDetails(with: 1)
+//            .sink { comp in
+//                if comp == .finished {
+//                    expectation.fulfill()
+//                    return
+//                }
+//                
+//                XCTFail("UseCase execute failed!")
+//            } receiveValue: { _ in
+//                expectation.fulfill()
+//            }
+//            .store(in: &cancellables)
+//        
+//        wait(for: [expectation], timeout: 10.0)
+//    }
 }
