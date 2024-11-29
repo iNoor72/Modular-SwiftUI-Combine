@@ -45,7 +45,7 @@ public final class MovieDetailsUseCaseImpl: MovieDetailsUseCase {
 extension MovieDetailsUseCaseImpl {
     private func toMovieDetailsViewItem(_ movieDetails: MovieDetailsModel) -> MovieDetailsViewItem? {
         guard
-            let spokenLanguages = movieDetails.spokenLanguages?.allObjects as? [String],
+            let spokenLanguages = movieDetails.spokenLanguages?.allObjects as? [SpokenLanguageModel],
             let genres = movieDetails.genres?.allObjects as? [GenreModel]
         else {
             return nil
@@ -57,15 +57,16 @@ extension MovieDetailsUseCaseImpl {
         return MovieDetailsViewItem(
             uuid: movieDetails.uuid ?? UUID(),
             id: Int(movieDetails.id),
-            title: movieDetails.title,
+            title: movieDetails.title ?? "No title",
             budget: Int(movieDetails.budget),
-            posterPath: movieDetails.posterPath,
-            releaseDate: movieDetails.releaseDate?.components(separatedBy: "-").first ?? "",
-            backdropPath: movieDetails.backdropPath,
-            overview: movieDetails.overview,
-            homepage: movieDetails.homepage,
+            revenue: Int(movieDetails.revenue),
+            posterPath: movieDetails.posterPath ?? "",
+            releaseDate: movieDetails.releaseDate?.components(separatedBy: "-").first ?? "N/A",
+            backdropPath: movieDetails.backdropPath ?? "",
+            overview: movieDetails.overview ?? "No overview available.",
+            homepage: movieDetails.homepage ?? "N/A",
             spokenLanguages: spokenLanguagesViewItems,
-            status: movieDetails.status,
+            status: movieDetails.status ?? "N/A",
             runtime: Int(movieDetails.runtime),
             genres: genresViewItems
         )
@@ -75,9 +76,9 @@ extension MovieDetailsUseCaseImpl {
         GenreViewItem(id: Int(genre.id), name: genre.name ?? "")
     }
     
-    private func toSpokenLanguageViewItem(_ spokenLanguage: String) -> SpokenLanguageViewItem {
+    private func toSpokenLanguageViewItem(_ spokenLanguage: SpokenLanguageModel) -> SpokenLanguageViewItem {
         SpokenLanguageViewItem(
-            name: spokenLanguage
+            name: spokenLanguage.name ?? ""
         )
     }
 }

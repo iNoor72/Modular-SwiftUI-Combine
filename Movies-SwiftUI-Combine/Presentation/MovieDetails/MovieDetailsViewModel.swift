@@ -21,7 +21,7 @@ enum MovieDetailsScreenState {
 
 final class MovieDetailsViewModel: ObservableObject {
     @Published var state: MovieDetailsScreenState = .initial
-    @Published var movieDetails: MovieDetailsViewItem?
+    @Published var movieDetails: MovieDetailsViewItem!
     
     private let movieDetailsUseCase: MovieDetailsUseCase
     private let movieId: Int
@@ -58,6 +58,8 @@ final class MovieDetailsViewModel: ObservableObject {
                     self.state = .failure(error)
                 }
             } receiveValue: { [weak self] response in
+                guard let response else { return }
+                
                 self?.movieDetails = response
                 self?.state = .success
             }
