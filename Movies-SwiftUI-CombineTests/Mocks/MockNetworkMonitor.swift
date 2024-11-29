@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import Combine
 @testable import Movies_SwiftUI_Combine
 
 final class MockNetworkMonitor: NetworkMonitorProtocol {
-    var isConnected: Bool = true
+    var isConnectedPublisher = CurrentValueSubject<Bool, Never>(true)
 }
