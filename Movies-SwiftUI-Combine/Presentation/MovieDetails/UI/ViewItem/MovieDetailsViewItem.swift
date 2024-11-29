@@ -9,7 +9,7 @@ import Foundation
 
 public struct MovieDetailsViewItem: Identifiable, Hashable {
     public let uuid: UUID
-    public let id: Int
+    public let id: String
     public let title: String
     public let budget: Int
     public let revenue: Int

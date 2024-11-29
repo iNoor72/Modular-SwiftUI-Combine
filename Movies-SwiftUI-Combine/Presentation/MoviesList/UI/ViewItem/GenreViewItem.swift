@@ -9,7 +9,7 @@ import Foundation
 
 public struct GenreViewItem: Hashable, Identifiable {
     public let uuid = UUID()
-    public let id: Int
+    public let id: String
     public let name: String
     public var isSelected: Bool = false
     

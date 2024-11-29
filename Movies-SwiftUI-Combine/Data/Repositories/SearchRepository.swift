@@ -28,7 +28,12 @@ final class SearchRepository: SearchRepositoryProtocol {
                     
                     let response = $0.toMoviesResponseModel(context: cache.managedObjectContext)
                     
-                    self.cache.save()
+                    //We need to cache movies only
+                    let movies = response.movies?.allObjects as? [MovieModel]
+                    movies?.forEach { movie in
+                        self.cache.addObject(movie.movieID ?? "", movie, MovieModel.self)
+                    }
+                    
                     return response
                 }
                 .eraseToAnyPublisher()

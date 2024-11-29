@@ -110,7 +110,7 @@ final class MoviesListViewModel: ObservableObject {
         }
      
         fetchGenres()
-        fetchMovies(page: page)
+        fetchMovies(page: page, genres: selectedGenres)
     }
     
     private func checkNetworkConnection() -> Bool {
@@ -142,7 +142,7 @@ final class MoviesListViewModel: ObservableObject {
     private func paginate(with movie: MovieViewItem) {
         guard checkNetworkConnection() else { return }
         
-        let movies = isSearching ? searchedMovies : movies
+        let movies = isSearching ? searchedMovies : (selectedGenres.isEmpty ? movies : filteredMovies)
         if let lastMovie = movies.last, movie.id == lastMovie.id {
             loadMoreMovies()
         }
@@ -160,7 +160,7 @@ final class MoviesListViewModel: ObservableObject {
         if isSearching {
             searchMovies(page: page)
         } else {
-            fetchMovies(page: page)
+            fetchMovies(page: page, genres: selectedGenres)
         }
     }
     
@@ -209,7 +209,7 @@ final class MoviesListViewModel: ObservableObject {
                 if genres.isEmpty {
                     self?.movies.append(contentsOf: moviesResponse?.movies ?? [])
                 } else {
-                    self?.filteredMovies = moviesResponse?.movies ?? []
+                    self?.filteredMovies.append(contentsOf: moviesResponse?.movies ?? [])
                 }
                 
                 self?.totalPages = moviesResponse?.totalPages ?? 1

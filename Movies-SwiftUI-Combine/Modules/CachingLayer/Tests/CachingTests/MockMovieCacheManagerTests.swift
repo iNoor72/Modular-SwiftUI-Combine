@@ -30,20 +30,34 @@ final class MockMovieCacheManagerTests: XCTestCase {
     }
     
     func test_addObject() {
-        sut.addObject(nil)
+        sut.addObject(nil, NSManagedObject.self)
         
         XCTAssertEqual((sut as! MoviesCacheManagerMock).data.count, 1)
     }
     
     func test_fetch() {
-        let result = sut.fetch(NSManagedObject.self, with: NSFetchRequest<NSManagedObject>())
-        XCTAssertTrue(result.isEmpty)
+        do {
+            let result = try sut.fetch(NSManagedObject.self, with: NSFetchRequest<NSManagedObject>())
+            XCTAssertTrue(result.isEmpty)
+        } catch {
+            XCTFail("Unexpected error fetching object, error: \(error)")
+        }
     }
     
     func test_clearCache() {
         sut.clearCache()
         
         XCTAssertFalse((sut as! MoviesCacheManagerMock).isSavedCalled)
+    }
+    
+    func test_deleteObject() {
+        do {
+            try sut.deleteObject(NSManagedObject.self, with: NSManagedObjectID.init())
+            
+            XCTAssertTrue((sut as! MoviesCacheManagerMock).isDeleteCalled)
+        } catch {
+            XCTFail("Unexpected error deleting object, error: \(error)")
+        }
     }
 
 }

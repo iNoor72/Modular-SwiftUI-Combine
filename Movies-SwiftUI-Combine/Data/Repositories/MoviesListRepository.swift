@@ -28,7 +28,12 @@ final class MoviesListRepository: MoviesListRepositoryProtocol {
                     
                     let response = $0.toMoviesResponseModel(context: self.cache.managedObjectContext)
                     
-                    self.cache.save()
+                    //We need to cache movies only
+                    let movies = response.movies?.allObjects as? [MovieModel]
+                    movies?.forEach { movie in
+                        self.cache.addObject(movie.movieID ?? "", movie, MovieModel.self)
+                    }
+                    
                     return response
                 }
                 .eraseToAnyPublisher()
@@ -40,7 +45,12 @@ final class MoviesListRepository: MoviesListRepositoryProtocol {
     }
     
     func getCachedMovies() -> [MovieModel] {
-        let request = MovieModel.fetchRequest()
-        return cache.fetch(MovieModel.self, with: request) 
+        do {
+            let request = MovieModel.fetchRequest()
+            return try cache.fetch(MovieModel.self, with: request)
+        } catch {
+            NSLog("Error fetching cached movies: \(error)")
+            return []
+        }
     }
 }

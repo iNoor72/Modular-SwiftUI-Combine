@@ -12,7 +12,7 @@ struct MovieCardView: View {
     
     var body: some View {
         HStack {
-            VStack {
+            VStack(alignment: .leading) {
                 CacheAsyncImage(path: movieItem.posterPath ?? "", content: { phase in
                     switch phase {
                     case .empty:
@@ -36,10 +36,10 @@ struct MovieCardView: View {
                 
                 Text(movieItem.title)
                     .bold()
-                    .foregroundStyle(.white)
+                    .padding(.leading, 4)
                 
                 Text(movieItem.releaseDate)
-                    .foregroundStyle(.white)
+                    .padding(.leading, 4)
             }
         }
     }

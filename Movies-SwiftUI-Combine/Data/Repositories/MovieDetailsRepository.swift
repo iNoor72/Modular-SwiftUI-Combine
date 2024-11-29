@@ -27,8 +27,8 @@ final class MovieDetailsRepository: MovieDetailsRepositoryProtocol {
                     guard let self else { return nil }
                     
                     let response = $0.toMovieDetailsModel(context: cache.managedObjectContext)
-                    
-                    self.cache.save()
+                     
+                    self.cache.addObject(response.movieID ?? "", response, MovieDetailsModel.self)
                     return response
                 }
                 .eraseToAnyPublisher()

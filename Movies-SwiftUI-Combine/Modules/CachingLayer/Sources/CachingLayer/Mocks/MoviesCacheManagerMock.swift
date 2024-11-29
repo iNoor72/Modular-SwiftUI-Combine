@@ -13,13 +13,14 @@ public final class MoviesCacheManagerMock {
     
     public var managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
     public var isSavedCalled: Bool = false
+    public var isDeleteCalled: Bool = false
     public var data: [String] = []
     
     private init() {}
 }
 
 extension MoviesCacheManagerMock: MovieCacheManagerProtocol {
-    public func addObject(_ object: NSManagedObject?) {
+    public func addObject<T: NSManagedObject>(_ objectID: String, _ object: T?, _ type: T.Type) {
         data.append("")
     }
     
@@ -31,8 +32,8 @@ extension MoviesCacheManagerMock: MovieCacheManagerProtocol {
         isSavedCalled = true
     }
     
-    public func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: NSManagedObjectID) throws -> T? {
-        nil
+    public func deleteObject<T>(_ type: T.Type, with id: NSManagedObjectID) throws where T : NSManagedObject {
+        isDeleteCalled = true
     }
     
     public func clearCache() {

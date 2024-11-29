@@ -12,7 +12,7 @@ public protocol MovieCacheManagerProtocol {
     
     func save()
     func clearCache()
-    func addObject(_ object: NSManagedObject?)
-    func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: NSManagedObjectID) throws -> T?
-    func fetch<T: NSManagedObject>(_ type: T.Type, with request: NSFetchRequest<T>) -> [T]
+    func addObject<T: NSManagedObject>(_ objectID: String, _ object: T?, _ type: T.Type)
+    func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: NSManagedObjectID) throws
+    func fetch<T: NSManagedObject>(_ type: T.Type, with request: NSFetchRequest<T>) throws -> [T]
 }

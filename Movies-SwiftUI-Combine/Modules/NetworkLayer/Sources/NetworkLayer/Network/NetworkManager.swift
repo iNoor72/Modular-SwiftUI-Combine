@@ -37,6 +37,7 @@ public final class NetworkManager: NetworkServiceProtocol {
                 
                 return data
             }
+            .timeout(.seconds(5), scheduler: RunLoop.main)
             .decode(type: T.self, decoder: JSONDecoder())
             .mapError { error -> NetworkError in
                 guard let error = error as? NetworkError else {

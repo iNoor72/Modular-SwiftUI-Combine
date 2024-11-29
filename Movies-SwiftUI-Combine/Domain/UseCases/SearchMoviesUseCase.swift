@@ -56,7 +56,7 @@ extension SearchMoviesUseCaseImpl {
     
     private func toMovieViewItem(_ movie: MovieModel) -> MovieViewItem {
         MovieViewItem(
-            id: Int(movie.id),
+            id: movie.movieID ?? "",
             uuid: movie.uuid ?? UUID(),
             title: movie.title ?? "",
             releaseDate: movie.releaseDate?.components(separatedBy: "-").first ?? "",

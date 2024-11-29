@@ -56,7 +56,7 @@ extension MovieDetailsUseCaseImpl {
         
         return MovieDetailsViewItem(
             uuid: movieDetails.uuid ?? UUID(),
-            id: Int(movieDetails.id),
+            id: movieDetails.movieID ?? "",
             title: movieDetails.title ?? "No title",
             budget: Int(movieDetails.budget),
             revenue: Int(movieDetails.revenue),
@@ -73,7 +73,7 @@ extension MovieDetailsUseCaseImpl {
     }
     
     private func toGenreViewItem(_ genre: GenreModel) -> GenreViewItem {
-        GenreViewItem(id: Int(genre.id), name: genre.name ?? "")
+        GenreViewItem(id: genre.genreID ?? "", name: genre.name ?? "")
     }
     
     private func toSpokenLanguageViewItem(_ spokenLanguage: SpokenLanguageModel) -> SpokenLanguageViewItem {

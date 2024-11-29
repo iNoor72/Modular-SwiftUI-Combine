@@ -8,7 +8,7 @@
 import Foundation
 
 public struct MovieViewItem: Identifiable, Hashable {
-    public let id: Int
+    public let id: String
     let uuid: UUID
     let title: String
     let releaseDate: String

@@ -61,10 +61,24 @@ public final class MoviesCacheManager {
 }
 
 extension MoviesCacheManager: MovieCacheManagerProtocol {
-    public func addObject(_ object: NSManagedObject?) {
-        if didMovieModelsExceedMaxLimit() {
-            //Delete 1st object
-//            guard let firstModel = managedObjectContext.fetch(object.fetc)
+    public func addObject<T: NSManagedObject>(_ objectID: String, _ object: T?, _ type: T.Type) {
+        defer { save() }
+        do {
+            if didMovieModelsExceedMaxLimit() {
+                guard let fetchRequest = type.fetchRequest() as? NSFetchRequest<T> else { return }
+                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+                fetchRequest.fetchLimit = 1
+                let fetchedItem = try fetch(type, with: fetchRequest).first
+                
+                //Skip if item is already saved. Sometimes TMDB returns same movies
+                guard fetchedItem?.objectID != object?.objectID else { return }
+                
+                guard let firstItem = fetchedItem else { return }
+                try deleteObject(type, with: firstItem.objectID)
+                return
+            }
+        } catch {
+            NSLog("Unresolved error adding object: \(error)")
         }
     }
     
@@ -86,33 +100,32 @@ extension MoviesCacheManager: MovieCacheManagerProtocol {
         save()
     }
     
-    public func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: NSManagedObjectID) -> T? {
+    public func deleteObject<T: NSManagedObject>(_ type: T.Type, with id: NSManagedObjectID) throws {
         do {
             let request = type.fetchRequest()
             let objects = try managedObjectContext.fetch(request) as! [T]
             if let objectToDelete = objects.first(where: { $0.objectID === id }) {
                 managedObjectContext.delete(objectToDelete)
-                save()
             }
         } catch {
             NSLog("Unresolved error deleting then saving context: \(error)")
+            throw error
         }
-        
-        return nil
     }
     
-    public func fetch<T: NSManagedObject>(_ type: T.Type, with request: NSFetchRequest<T>) -> [T] {
+    public func fetch<T: NSManagedObject>(_ type: T.Type, with request: NSFetchRequest<T>) throws -> [T] {
         do {
             let result = try managedObjectContext.fetch(request)
             return result
         } catch {
             NSLog("Unresolved error fetchin from context: \(error)")
-            return []
+            throw error
         }
     }
 }
 
 extension MoviesCacheManager {
+    //I'm allowing the caching of 1000 records, this should be a fair number to allow a good user experience. However, Core Data doesn't set a limit for this unless you're caching data with enormous size (ex: BLOBs).
     private func didMovieModelsExceedMaxLimit() -> Bool {
         let modelsCount = managedObjectContext.registeredObjects.count
         return modelsCount >= AppConstants.maxCachedMoviesCount

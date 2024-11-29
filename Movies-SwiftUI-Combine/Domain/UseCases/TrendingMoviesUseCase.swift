@@ -28,7 +28,7 @@ public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
             guard let self else { return }
             
             moviesListRepository
-                .fetchMovies(with: page, genreIDs: genres.compactMap { $0.id })
+                .fetchMovies(with: page, genreIDs: genres.compactMap { Int($0.id) })
                 .receive(on: DispatchQueue.main)
                 .sink(receiveCompletion: { comp in
                     promise(.failure(NetworkError.failedRequest))
@@ -58,7 +58,13 @@ extension TrendingMoviesUseCaseImpl {
     }
     
     private func toMovieViewItem(_ movie: MovieModel) -> MovieViewItem {
-        MovieViewItem(id: Int(movie.id), uuid: movie.uuid ?? UUID(), title: movie.title ?? "", releaseDate: movie.releaseDate ?? "", posterPath: movie.posterPath)
+        MovieViewItem(
+            id: movie.movieID ?? "",
+            uuid: movie.uuid ?? UUID(),
+            title: movie.title ?? "",
+            releaseDate: movie.releaseDate ?? "",
+            posterPath: movie.posterPath
+        )
     }
 }
 

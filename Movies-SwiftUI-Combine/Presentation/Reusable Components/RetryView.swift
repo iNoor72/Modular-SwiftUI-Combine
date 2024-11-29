@@ -45,12 +45,10 @@ extension RetryView {
 extension RetryView {
     private var title: some View {
         Text("Failed to Load")
-            .foregroundStyle(.white)
     }
     
     private var subTitle: some View {
         Text("An unexpected error has occurred. You can try again by refreshing this page")
-            .foregroundStyle(.white)
             .multilineTextAlignment(.center)
     }
     
@@ -60,8 +58,6 @@ extension RetryView {
         } label: {
             HStack{
                 Image(systemName: "arrow.circlepath")
-                Text(title)
-                    .foregroundStyle(.white)
             }
         }
     }
