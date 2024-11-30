@@ -38,4 +38,14 @@ final class MovieDetailsRepository: MovieDetailsRepositoryProtocol {
             }.eraseToAnyPublisher()
         }
     }
+    
+    func getCachedMovieDetails(with id: String) -> MovieDetailsModel? {
+        do {
+            let request = MovieDetailsModel.fetchRequest()
+            return try cache.fetch(MovieDetailsModel.self, with: request).first { $0.movieID == id }
+        } catch {
+            NSLog("Error fetching cached movies: \(error)")
+            return nil
+        }
+    }
 }

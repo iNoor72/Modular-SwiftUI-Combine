@@ -12,6 +12,7 @@ import CachingLayer
 
 public protocol MovieDetailsUseCase {
     func execute(with movieId: Int) -> AnyPublisher<MovieDetailsViewItem?, NetworkError>
+    func getCachedMovieDetails(with id: String) -> MovieDetailsViewItem?
 }
 
 public final class MovieDetailsUseCaseImpl: MovieDetailsUseCase {
@@ -39,6 +40,12 @@ public final class MovieDetailsUseCaseImpl: MovieDetailsUseCase {
                 .store(in: &cancellables)
         }
         .eraseToAnyPublisher()
+    }
+    
+    public func getCachedMovieDetails(with id: String) -> MovieDetailsViewItem? {
+        guard let movieDetails = movieDetailsRepository.getCachedMovieDetails(with: id) else { return nil }
+            
+        return toMovieDetailsViewItem(movieDetails)
     }
 }
 
@@ -88,5 +95,9 @@ public final class MovieDetailsUseCaseMock: MovieDetailsUseCase {
         Future<MovieDetailsViewItem?, NetworkError> { promise in
             promise(.success(nil))
         }.eraseToAnyPublisher()
+    }
+    
+    public func getCachedMovieDetails(with id: String) -> MovieDetailsViewItem? {
+     nil
     }
 }

@@ -53,10 +53,11 @@ extension RetryView {
     }
     
     private func browseButton(title: LocalizedStringKey, action : @escaping () -> Void) -> some View {
-        Button {
+        Button() {
             action()
         } label: {
             HStack{
+                Text(title)
                 Image(systemName: "arrow.circlepath")
             }
         }
