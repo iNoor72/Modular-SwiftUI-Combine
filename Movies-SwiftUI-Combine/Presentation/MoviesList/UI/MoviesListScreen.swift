@@ -47,10 +47,6 @@ struct MoviesListScreen: View {
                 .onAppear {
                     viewModel.handle(.loadData)
                 }
-        case .failure:
-            RetryView {
-                viewModel.handle(.loadData)
-            }
         case .success, .searching, .offline:
             contentView
         }

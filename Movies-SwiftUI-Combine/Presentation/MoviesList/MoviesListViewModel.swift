@@ -25,7 +25,6 @@ enum MoviesListScreenState: Int {
     case initial
     case success
     case searching
-    case failure
     case offline
 }
 
@@ -103,9 +102,9 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func onAppear() {
-        guard checkNetworkConnection() else {
-            movies = dependencies.trendingMoviesUseCase.getCachedMovies()
-            state = .offline
+        guard isConnectedToNetwork() else {
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
             return
         }
      
@@ -113,13 +112,23 @@ final class MoviesListViewModel: ObservableObject {
         fetchMovies(page: page, genres: selectedGenres)
     }
     
-    private func checkNetworkConnection() -> Bool {
-        guard !isNetworkConnectionLost else {
-            state = .offline
-            return false
+    private func handleMoviesOfflineFetching() {
+        guard state != .offline else { return }
+        let movies = dependencies.trendingMoviesUseCase.getCachedMovies()
+        
+        guard !movies.isEmpty else {
+            showErrorAlert = true
+            error = AppError.noDataAvailable
+            return
         }
         
-        return true
+        self.movies = movies
+        state = .offline
+    }
+    
+    private func isConnectedToNetwork() -> Bool {
+        if isNetworkConnectionLost { state = .offline }
+        return !isNetworkConnectionLost
     }
     
     private func handleNetworkChanging(_ isConnected: Bool) {
@@ -137,11 +146,17 @@ final class MoviesListViewModel: ObservableObject {
     private func resetErrors() {
         error = nil
         showErrorAlert = false
+        didTapRetry()
     }
     
     private func paginate(with movie: MovieViewItem) {
-        guard checkNetworkConnection() else { return }
+        guard isConnectedToNetwork() else {
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
+            return
+        }
         
+        isNetworkConnectionLost = false
         let movies = isSearching ? searchedMovies : (selectedGenres.isEmpty ? movies : filteredMovies)
         if let lastMovie = movies.last, movie.id == lastMovie.id {
             loadMoreMovies()
@@ -149,7 +164,7 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func loadMoreMovies() {
-        guard checkNetworkConnection() else { return }
+        guard isConnectedToNetwork() else { return }
         
         guard hasMoreRows else {
             return
@@ -165,8 +180,13 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func fetchGenres() {
-        guard checkNetworkConnection() else { return }
+        guard isConnectedToNetwork() else {
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
+            return
+        }
         
+        isNetworkConnectionLost = false
         isLoading = true
         
         dependencies.genresUseCase.execute()
@@ -179,7 +199,6 @@ final class MoviesListViewModel: ObservableObject {
                     break
                 case .failure(let error):
                     self.error = error
-                    self.state = .failure
                 }
             }, receiveValue: { [weak self] genres in
                 self?.genres = genres
@@ -189,8 +208,13 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func fetchMovies(page: Int = 1, genres: [GenreViewItem] = []) {
-        guard checkNetworkConnection() else { return }
+        guard isConnectedToNetwork() else {
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
+            return
+        }
         
+        isNetworkConnectionLost = false
         isLoading = true
         
         dependencies.trendingMoviesUseCase.execute(page: page, genres: genres)
@@ -203,7 +227,6 @@ final class MoviesListViewModel: ObservableObject {
                     break
                 case .failure(let error):
                     self.error = error
-                    self.state = .failure
                 }
             }, receiveValue: { [weak self] moviesResponse in
                 if genres.isEmpty {
@@ -219,8 +242,13 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func searchMovies(page: Int = 1) {
-        guard checkNetworkConnection() else { return }
+        guard isConnectedToNetwork() else {
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
+            return
+        }
         
+        isNetworkConnectionLost = false
         isSearching = true
         isLoading = true
         
@@ -240,7 +268,6 @@ final class MoviesListViewModel: ObservableObject {
                     break
                 case .failure(let error):
                     self.error = error
-                    self.state = .failure
                 }
             } receiveValue: {[weak self] moviesResponse in
                 self?.searchedMovies.append(contentsOf: moviesResponse?.movies ?? [])
