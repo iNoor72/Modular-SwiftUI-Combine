@@ -176,7 +176,7 @@ final class MoviesListViewModel: ObservableObject {
         if isSearching {
             searchMovies(page: page)
         } else {
-            fetchMovies(page: page, genres: selectedGenres)
+            fetchMovies(page: page, genres: selectedGenres, appendNewResults: !selectedGenres.isEmpty)
         }
     }
     
@@ -209,7 +209,7 @@ final class MoviesListViewModel: ObservableObject {
             }).store(in: &cancellables)
     }
     
-    private func fetchMovies(page: Int = 1, genres: [GenreViewItem] = []) {
+    private func fetchMovies(page: Int = 1, genres: [GenreViewItem] = [], appendNewResults: Bool = false) {
         guard isConnectedToNetwork() else {
             isNetworkConnectionLost = true
             handleMoviesOfflineFetching()
@@ -235,7 +235,11 @@ final class MoviesListViewModel: ObservableObject {
                 if genres.isEmpty {
                     self?.movies.append(contentsOf: moviesResponse?.movies ?? [])
                 } else {
-                    self?.filteredMovies.append(contentsOf: moviesResponse?.movies ?? [])
+                    if appendNewResults {
+                        self?.filteredMovies.append(contentsOf: moviesResponse?.movies ?? [])
+                    } else {
+                        self?.filteredMovies = moviesResponse?.movies ?? []
+                    }
                 }
                 
                 self?.totalPages = moviesResponse?.totalPages ?? 1
@@ -282,6 +286,7 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func didSelectGenreAction(genre: GenreViewItem) {
+        let oldGenres = selectedGenres
         guard let genreIndex = genres.firstIndex(where: { $0.id == genre.id }) else { return }
         genres[genreIndex].isSelected.toggle()
         
@@ -293,7 +298,7 @@ final class MoviesListViewModel: ObservableObject {
             }
         }
         
-        fetchMovies(page: page, genres: selectedGenres)
+        fetchMovies(page: page, genres: selectedGenres, appendNewResults: oldGenres == selectedGenres)
     }
     
     private func clearSearch() {
