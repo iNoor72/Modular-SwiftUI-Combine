@@ -8,7 +8,9 @@
 import Foundation
 import Combine
 import NetworkLayer
+import CachingLayer
 
 protocol MoviesListRepositoryProtocol {
-    func fetchMovies(with page: Int, genreIDs: [Int]) -> AnyPublisher<MoviesResponse, NetworkError>
+    func fetchMovies(with page: Int, genreIDs: [Int]) -> AnyPublisher<MoviesResponseModel?, NetworkError>
+    func getCachedMovies() -> [MovieModel]
 }

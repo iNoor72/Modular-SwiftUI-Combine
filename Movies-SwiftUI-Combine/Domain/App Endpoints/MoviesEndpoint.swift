@@ -27,7 +27,7 @@ public enum MoviesEndpoint: Endpoint {
         case .trending(let page, let genres):
             return [
                 "api_key": AppConfiguration.apiKey,
-                "include_adult": 0.description,
+                "include_adult": false.description,
                 "sort_by": "popularity.desc",
                 "page": page.description,
                 "with_genres": genres.map { $0.description }.joined(separator: ",")

@@ -25,6 +25,18 @@ struct MoviesListScreen: View {
         .onChange(of: viewModel.debounceValue) { _ in
             viewModel.handle(.search)
         }
+        .alert(isPresented: $viewModel.isNetworkConnectionLost) {
+            Alert(title: Text("Error"), message: Text(AppStrings.noNetworkAlertMessage), primaryButton: .default(Text("Retry"), action: {
+                viewModel.handle(.retryAction)
+            }), secondaryButton: .cancel())
+        }
+        
+//        .alert(isPresented: $viewModel.showErrorAlert) {
+//            Alert(title: Text("Error"), message: Text(viewModel.error?.localizedDescription ?? ""), primaryButton: .default(Text("Retry"), action: {
+//                viewModel.handle(.resetError)
+//                viewModel.handle(.loadData)
+//            }), secondaryButton: .cancel())
+//        }
     }
     
     @ViewBuilder
@@ -35,16 +47,11 @@ struct MoviesListScreen: View {
                 .onAppear {
                     viewModel.handle(.loadData)
                 }
-        case .failure:
-            RetryView {
-                viewModel.handle(.loadData)
-            }
-        case .success, .searching:
+        case .success, .searching, .offline:
             contentView
         }
     }
 }
-
 
 extension MoviesListScreen {
     @ViewBuilder
@@ -58,7 +65,11 @@ extension MoviesListScreen {
             scrollContent: {
                 LazyVStack(spacing: Constants.contentSpacing) {
                     genresView
-                    moviesListView(movies: viewModel.movies)
+                    if viewModel.selectedGenres.isEmpty {
+                        moviesListView(movies: viewModel.movies)
+                    } else {
+                        moviesListView(movies: viewModel.filteredMovies)
+                    }
                 }
                 .padding(.horizontal, Constants.contentSpacing)
             }, onSearchContent: {
@@ -77,11 +88,11 @@ extension MoviesListScreen {
             .frame(height: 40)
     }
     
-    private func moviesListView(movies: [MoviesResponseItem]) -> some View {
+    private func moviesListView(movies: [MovieViewItem]) -> some View {
         MoviesListScrollView(movies: movies) { movie in
             viewModel.handle(.navigateToDetails(movie))
         } onAppearAction: { movie in
-            viewModel.validatePagination(with: movie)
+            viewModel.handle(.paginate(movie))
         }
             .padding(.horizontal, Constants.contentSpacing)
     }

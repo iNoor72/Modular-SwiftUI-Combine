@@ -13,15 +13,19 @@ enum MoviesListEvents {
     case loadMoreData
     case search
     case clearSearch
-    case didSelectGenre(GenreItem)
-    case navigateToDetails(MoviesResponseItem)
+    case resetError
+    case retryAction
+    case networkChanged(Bool)
+    case paginate(MovieViewItem)
+    case didSelectGenre(GenreViewItem)
+    case navigateToDetails(MovieViewItem)
 }
 
 enum MoviesListScreenState: Int {
     case initial
     case success
     case searching
-    case failure
+    case offline
 }
 
 final class MoviesListViewModel: ObservableObject {
@@ -29,8 +33,9 @@ final class MoviesListViewModel: ObservableObject {
     @Published var searchQuery: String = ""
     @Published var debounceValue = ""
     @Published var isLoading = false
-    @Published var movies: [MoviesResponseItem] = []
-    var error: Error?
+    @Published var isNetworkConnectionLost = false
+    @Published var movies: [MovieViewItem] = []
+    
     private var page: Int = 1
     private var totalPages: Int = 1 {
         didSet {
@@ -38,11 +43,16 @@ final class MoviesListViewModel: ObservableObject {
         }
     }
     
-    var selectedGenres: [GenreItem] = []
-    var searchedMovies: [MoviesResponseItem] = []
-    var genres: [GenreItem] = []
+    var genres: [GenreViewItem] = []
+    var selectedGenres: [GenreViewItem] = []
+    var searchedMovies: [MovieViewItem] = []
+    var filteredMovies: [MovieViewItem] = []
+    
+    var error: Error?
+    var showErrorAlert = false
     var hasMoreRows = false
     var isSearching = false
+    
     private let dependencies: MoviesListDependencies
     private var cancellables = Set<AnyCancellable>()
     
@@ -51,7 +61,18 @@ final class MoviesListViewModel: ObservableObject {
         $searchQuery
             .debounce(for: 1.0, scheduler: RunLoop.main)
             .assign(to: &$debounceValue)
-        handle(.loadData)
+        observeNetworkChanges()
+    }
+    
+    private func observeNetworkChanges() {
+        dependencies.networkMonitor.isConnectedPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isConnected in
+                guard let self = self else { return }
+                self.isNetworkConnectionLost = !isConnected
+                handle(.networkChanged(isConnected))
+            }
+            .store(in: &cancellables)
     }
     
     func handle(_ event: MoviesListEvents) {
@@ -65,6 +86,14 @@ final class MoviesListViewModel: ObservableObject {
             searchMovies()
         case .clearSearch:
             clearSearch()
+        case .resetError:
+            resetErrors()
+        case .retryAction:
+            didTapRetry()
+        case .networkChanged(let isConnected):
+            handleNetworkChanging(isConnected)
+        case .paginate(let movie):
+            paginate(with: movie)
         case .didSelectGenre(let genre):
             didSelectGenreAction(genre: genre)
         case .navigateToDetails(let movieItem):
@@ -73,18 +102,70 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func onAppear() {
+        guard isConnectedToNetwork() else {
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
+            return
+        }
+     
         fetchGenres()
-        fetchMovies(page: page)
+        fetchMovies(page: page, genres: selectedGenres)
     }
     
-    func validatePagination(with movie: MoviesResponseItem) {
-        let movies = isSearching ? searchedMovies : movies
+    private func handleMoviesOfflineFetching() {
+        let movies = dependencies.trendingMoviesUseCase.getCachedMovies()
+        
+        guard !movies.isEmpty else {
+            showErrorAlert = true
+            error = AppError.noDataAvailable
+            return
+        }
+        
+        self.movies = movies
+        state = .offline
+    }
+    
+    private func isConnectedToNetwork() -> Bool {
+        if isNetworkConnectionLost { state = .offline }
+        return !isNetworkConnectionLost
+    }
+    
+    private func handleNetworkChanging(_ isConnected: Bool) {
+        guard isConnected else {
+            state = .offline
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
+            return
+        }
+        
+        isNetworkConnectionLost = false
+        state = .initial
+        handle(.loadData)
+    }
+    
+    private func resetErrors() {
+        error = nil
+        showErrorAlert = false
+        didTapRetry()
+    }
+    
+    private func paginate(with movie: MovieViewItem) {
+        guard isConnectedToNetwork() else {
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
+            return
+        }
+        
+        isNetworkConnectionLost = false
+        let movies = isSearching ? searchedMovies : (selectedGenres.isEmpty ? movies : filteredMovies)
         if let lastMovie = movies.last, movie.id == lastMovie.id {
             loadMoreMovies()
         }
     }
     
     private func loadMoreMovies() {
+        guard isConnectedToNetwork() else { return }
+        
         guard hasMoreRows else {
             return
         }
@@ -94,83 +175,82 @@ final class MoviesListViewModel: ObservableObject {
         if isSearching {
             searchMovies(page: page)
         } else {
-            fetchMovies(page: page)
+            fetchMovies(page: page, genres: selectedGenres)
         }
-    }
-    
-    private func didSelectGenreAction(genre: GenreItem) {
-        if selectedGenres.contains(genre) {
-            if let index = selectedGenres.firstIndex(where: { $0.id == genre.id }) {
-        page = 1
-                selectedGenres.remove(at: index)
-            }
-        } else {
-            selectedGenres.append(genre)
-        }
-        
-        fetchMovies(page: page, genres: selectedGenres)
     }
     
     private func fetchGenres() {
+        guard isConnectedToNetwork() else {
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
+            return
+        }
+        
+        isNetworkConnectionLost = false
         isLoading = true
         
         dependencies.genresUseCase.execute()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: {[weak self] completion in
                 guard let self else { return }
+                self.isLoading = false
                 
                 switch completion {
                 case .finished:
                     break
                 case .failure(let error):
                     self.error = error
-                    self.state = .failure
                 }
-            }, receiveValue: { [weak self] genresResponse in
-                self?.genres = genresResponse.genres ?? []
+            }, receiveValue: { [weak self] genres in
+                self?.genres = genres
                 self?.isLoading = false
                 self?.state = .success
             }).store(in: &cancellables)
     }
     
-    private func fetchMovies(page: Int = 1, genres: [GenreItem] = []) {
+    private func fetchMovies(page: Int = 1, genres: [GenreViewItem] = []) {
+        guard isConnectedToNetwork() else {
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
+            return
+        }
+        
+        isNetworkConnectionLost = false
         isLoading = true
         
         dependencies.trendingMoviesUseCase.execute(page: page, genres: genres)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: {[weak self] completion in
                 guard let self else { return }
+                self.isLoading = false
                 
                 switch completion {
                 case .finished:
                     break
                 case .failure(let error):
                     self.error = error
-                    self.state = .failure
                 }
             }, receiveValue: { [weak self] moviesResponse in
-                self?.movies.append(contentsOf: moviesResponse.results ?? [])
-                if genres.isEmpty || (!genres.isEmpty && page > 1) {
-                    self?.movies.append(contentsOf: moviesResponse.results ?? [])
+                if genres.isEmpty {
+                    self?.movies.append(contentsOf: moviesResponse?.movies ?? [])
                 } else {
-                    self?.movies = moviesResponse.results ?? []
+                    self?.filteredMovies.append(contentsOf: moviesResponse?.movies ?? [])
                 }
-                self?.totalPages = moviesResponse.totalPages ?? 1
+                
+                self?.totalPages = moviesResponse?.totalPages ?? 1
                 self?.isLoading = false
                 self?.state = .success
             }).store(in: &cancellables)
     }
     
-    private func clearSearch() {
-        page = 1
-        selectedGenres = []
-        searchedMovies = []
-        searchQuery = ""
-        isSearching = false
-        state = .success
-    }
-    
     private func searchMovies(page: Int = 1) {
+        guard isConnectedToNetwork() else {
+            isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
+            return
+        }
+        
+        isNetworkConnectionLost = false
         isSearching = true
         isLoading = true
         
@@ -184,19 +264,49 @@ final class MoviesListViewModel: ObservableObject {
             .throttle(for: 3.0, scheduler: RunLoop.main, latest: true)
             .sink {[weak self] completion in
                 guard let self else { return }
+                self.isLoading = false
                 
                 switch completion {
                 case .finished:
                     break
                 case .failure(let error):
                     self.error = error
-                    self.state = .failure
                 }
-            } receiveValue: {[weak self] response in
-                self?.searchedMovies.append(contentsOf: response.results ?? [])
-                self?.totalPages = response.totalPages ?? 1
+            } receiveValue: {[weak self] moviesResponse in
+                self?.searchedMovies.append(contentsOf: moviesResponse?.movies ?? [])
+                self?.totalPages = moviesResponse?.totalPages ?? 1
                 self?.isLoading = false
                 self?.state = .success
             }.store(in: &cancellables)
+    }
+    
+    private func didSelectGenreAction(genre: GenreViewItem) {
+        guard let genreIndex = genres.firstIndex(where: { $0.id == genre.id }) else { return }
+        genres[genreIndex].isSelected.toggle()
+        
+        if genres[genreIndex].isSelected {
+            selectedGenres.append(genre)
+        } else {
+            if let index = selectedGenres.firstIndex(where: { $0.id == genre.id }) {
+                selectedGenres.remove(at: index)
+            }
+        }
+        
+        fetchMovies(page: page, genres: selectedGenres)
+    }
+    
+    private func clearSearch() {
+        page = 1
+        selectedGenres = []
+        searchedMovies = []
+        searchQuery = ""
+        debounceValue = ""
+        isSearching = false
+        state = .success
+    }
+    
+    private func didTapRetry() {
+        state = .initial
+        handle(.loadData)
     }
 }

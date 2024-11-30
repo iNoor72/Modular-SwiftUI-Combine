@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "CachingLayer",
+    platforms: [.iOS(.v16)],
     
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -17,6 +18,7 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "CachingLayer"),
+        .testTarget(name: "CachingTests", dependencies: ["CachingLayer"])
 
     ]
 )

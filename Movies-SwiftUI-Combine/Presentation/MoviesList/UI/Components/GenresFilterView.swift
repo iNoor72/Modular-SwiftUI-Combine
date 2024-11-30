@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct GenresFilterView: View {
-    var genres: [GenreItem]
-    var didSelectGenreAction: ((GenreItem) -> ())?
+    var genres: [GenreViewItem]
+    var didSelectGenreAction: ((GenreViewItem) -> ())?
     
     var body: some View {
         ScrollView(.horizontal) {

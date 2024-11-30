@@ -7,21 +7,33 @@
 
 import Foundation
 import Network
+import Combine
 
-class NetworkMonitor: ObservableObject {
-    private let networkMonitor = NWPathMonitor()
-    private let workerQueue = DispatchQueue(label: "NetworkMonitor")
-    var isConnected = false
+protocol NetworkMonitorProtocol {
+    var isConnectedPublisher: CurrentValueSubject<Bool, Never> { get }
+}
 
-    init() {
-        networkMonitor.pathUpdateHandler = { path in
-            self.isConnected = path.status == .satisfied
-            Task {
-                await MainActor.run {
-                    self.objectWillChange.send()
-                }
-            }
+public final class NetworkMonitor: @unchecked Sendable, NetworkMonitorProtocol {
+
+    static let shared = NetworkMonitor()
+
+    private let monitor: NWPathMonitor
+    private let queue = DispatchQueue(label: "NetworkMonitor", qos: .background)
+    public let isConnectedPublisher = CurrentValueSubject<Bool, Never>(true)
+
+    private init() {
+        monitor = NWPathMonitor()
+    }
+
+    func startMonitoring() {
+        monitor.pathUpdateHandler = { [weak self] path in
+            let isConnected = path.status == .satisfied
+            self?.isConnectedPublisher.send(isConnected)
         }
-        networkMonitor.start(queue: workerQueue)
+        monitor.start(queue: queue)
+    }
+
+    func stopMonitoring() {
+        monitor.cancel()
     }
 }

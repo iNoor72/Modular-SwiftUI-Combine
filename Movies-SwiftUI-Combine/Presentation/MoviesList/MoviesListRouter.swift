@@ -9,11 +9,13 @@ import UIKit
 import SwiftUI
 
 protocol MoviesListRouterProtocol {
+    var viewController: UIViewController? { get }
+    
     func navigate(to destination: MoviesListDestination)
 }
 
 enum MoviesListDestination {
-    case movieDetails(MoviesResponseItem)
+    case movieDetails(MovieViewItem)
 }
 
 final class MoviesListRouter: MoviesListRouterProtocol {
@@ -28,9 +30,9 @@ final class MoviesListRouter: MoviesListRouterProtocol {
 }
 
 extension MoviesListRouter {
-    private func navigateToMovieDetails(_ movie: MoviesResponseItem) {
+    private func navigateToMovieDetails(_ movie: MovieViewItem) {
         let movieDetailsFactory = MovieDetailsFactory()
-        let movieDetailsView = movieDetailsFactory.make(with: movie.id ?? 0)
+        let movieDetailsView = movieDetailsFactory.make(with: Int(movie.id) ?? 0)
         viewController?.navigationController?.pushViewController(movieDetailsView, animated: true)
     }
 }

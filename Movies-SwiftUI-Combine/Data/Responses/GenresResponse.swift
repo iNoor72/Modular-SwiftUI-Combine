@@ -6,18 +6,30 @@
 //
 
 import Foundation
+import CoreData
+import CachingLayer
 
 public struct GenresResponse: Codable {
-    public let genres: [GenreItem]?
+    public let genres: [GenreResponseItem]?
     
     static let dummyData = GenresResponse(genres: [])
 }
 
-public struct GenreItem: Codable, Hashable, Identifiable {
+public struct GenreResponseItem: Codable, Hashable, Identifiable {
     public let id: Int?
     public let name: String?
     
-    func toGenreModel() -> GenreModel? {
-        GenreModel(id: id ?? 0, name: name ?? "", isSelected: false)
+    func toGenreModel(context: NSManagedObjectContext) -> GenreModel {
+        let entity = GenreModel(context: context)
+        entity.uuid = UUID()
+        entity.genreID = (id ?? 0).toString
+        entity.name = name ?? ""
+        entity.isSelected = false
+        
+        return entity
+    }
+    
+    func toGenreViewItem() -> GenreViewItem {
+        GenreViewItem(id: (id ?? 0).toString, name: name ?? "")
     }
 }

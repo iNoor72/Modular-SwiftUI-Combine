@@ -8,7 +8,8 @@
 import Foundation
 import Combine
 import NetworkLayer
+import CachingLayer
 
 protocol SearchRepositoryProtocol {
-    func searchMovies(page: Int, query: String) -> AnyPublisher<MoviesResponse, NetworkError>
+    func searchMovies(page: Int, query: String) -> AnyPublisher<MoviesResponseModel?, NetworkError>
 }

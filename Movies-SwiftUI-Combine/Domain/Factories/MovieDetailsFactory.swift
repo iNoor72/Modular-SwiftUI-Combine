@@ -8,6 +8,7 @@
 import UIKit
 import SwiftUI
 import NetworkLayer
+import CachingLayer
 
 protocol MovieDetailsFactoryProtocol {
     func make(with movieID: Int) -> UIViewController
@@ -16,9 +17,12 @@ protocol MovieDetailsFactoryProtocol {
 final class MovieDetailsFactory: MovieDetailsFactoryProtocol {
     func make(with movieID: Int) -> UIViewController {
         let network = NetworkManager.shared
-        let movieDetailsRepository = MovieDetailsRepository(network: network)
+        let cache = MoviesCacheManager.shared
+        let networkMonitor = NetworkMonitor.shared
+        
+        let movieDetailsRepository = MovieDetailsRepository(network: network, cache: cache)
         let movieDetailsUseCase = MovieDetailsUseCaseImpl(movieDetailsRepository: movieDetailsRepository)
-        let movieDetailsViewModel = MovieDetailsViewModel(movieId: movieID, movieDetailsUseCase: movieDetailsUseCase)
+        let movieDetailsViewModel = MovieDetailsViewModel(movieId: movieID, movieDetailsUseCase: movieDetailsUseCase, networkMonitor: networkMonitor)
         let router = MovieDetailsRouter()
         
         let movieDetailsView = MovieDetailsScreen(viewModel: movieDetailsViewModel)

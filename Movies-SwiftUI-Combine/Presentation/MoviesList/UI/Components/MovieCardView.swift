@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct MovieCardView: View {
-    var movieItem: MoviesResponseItem
+    var movieItem: MovieViewItem
     
     var body: some View {
         HStack {
-            VStack {
+            VStack(alignment: .leading) {
                 CacheAsyncImage(path: movieItem.posterPath ?? "", content: { phase in
                     switch phase {
                     case .empty:
@@ -34,12 +34,12 @@ struct MovieCardView: View {
                 })
                 .frame(height: 250)
                 
-                Text(movieItem.title ?? "")
+                Text(movieItem.title)
                     .bold()
-                    .foregroundStyle(.white)
+                    .padding(.leading, 4)
                 
-                Text(movieItem.releaseDate ?? "")
-                    .foregroundStyle(.white)
+                Text(movieItem.releaseDate)
+                    .padding(.leading, 4)
             }
         }
     }

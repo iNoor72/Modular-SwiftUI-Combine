@@ -8,6 +8,7 @@
 import SwiftUI
 import UIKit
 import NetworkLayer
+import CachingLayer
 
 protocol MoviesListFactoryProtocol {
     func make() -> UIViewController
@@ -15,9 +16,13 @@ protocol MoviesListFactoryProtocol {
 
 final class MoviesListFactory: MoviesListFactoryProtocol {
     func make() -> UIViewController {
-        let genresRepository = GenresRepository(network: NetworkManager.shared)
-        let moviesListRepository = MoviesListRepository(network: NetworkManager.shared)
-        let searchingRepository = SearchRepository(network: NetworkManager.shared)
+        let network = NetworkManager.shared
+        let cache = MoviesCacheManager.shared
+        let networkMonitor = NetworkMonitor.shared
+        
+        let genresRepository = GenresRepository(network: network)
+        let moviesListRepository = MoviesListRepository(network: network, cache: cache)
+        let searchingRepository = SearchRepository(network: network, cache: cache)
         
         let genresUseCase = GenresUseCaseImpl(genreRepository: genresRepository)
         let trendingMoviesUseCase = TrendingMoviesUseCaseImpl(moviesListRepository: moviesListRepository)
@@ -29,7 +34,8 @@ final class MoviesListFactory: MoviesListFactoryProtocol {
             router: router,
             genresUseCase: genresUseCase,
             trendingMoviesUseCase: trendingMoviesUseCase,
-            searchUseCase: searchMoviesUseCase
+            searchUseCase: searchMoviesUseCase,
+            networkMonitor: networkMonitor
         )
         
         let moviesListViewModel = MoviesListViewModel(dependencies: viewModelDependencies)
@@ -50,4 +56,5 @@ struct MoviesListDependencies {
     let genresUseCase: GenresUseCase
     let trendingMoviesUseCase: TrendingMoviesUseCase
     let searchUseCase: SearchMoviesUseCase
+    let networkMonitor: NetworkMonitorProtocol
 }

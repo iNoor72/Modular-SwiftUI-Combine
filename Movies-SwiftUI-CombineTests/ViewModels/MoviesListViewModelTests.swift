@@ -12,12 +12,14 @@ final class MoviesListViewModelTests: XCTestCase {
     var sut: MoviesListViewModel!
     
     override func setUp() {
-        let dep = MoviesListDependencies(router: MoviesListRouter(), genresUseCase: GenresUseCaseMock(), trendingMoviesUseCase: TrendingMoviesUseCaseMock(), searchUseCase: SearchMoviesUseCaseMock())
+        super.setUp()
+        let dep = MoviesListDependencies(router: MoviesListRouter(), genresUseCase: GenresUseCaseMock(), trendingMoviesUseCase: TrendingMoviesUseCaseMock(), searchUseCase: SearchMoviesUseCaseMock(), networkMonitor: MockNetworkMonitor())
         sut = MoviesListViewModel(dependencies: dep)
     }
     
     override func tearDown() {
         sut = nil
+        super.tearDown()
     }
     
     func test_fetchMovies() {
@@ -38,6 +40,7 @@ final class MoviesListViewModelTests: XCTestCase {
         sut.handle(.search)
         
         XCTAssertEqual(sut.searchedMovies.count, 0)
+        XCTAssertEqual(sut.state, .success)
     }
     
     func test_clearSearch() {
@@ -47,5 +50,20 @@ final class MoviesListViewModelTests: XCTestCase {
         XCTAssertEqual(sut.selectedGenres.count, 0)
         XCTAssertEqual(sut.searchQuery, "")
         XCTAssertEqual(sut.debounceValue, "")
+        XCTAssertFalse(sut.isSearching)
+        XCTAssertEqual(sut.state, .success)
+    }
+    
+    func test_resetError() {
+        sut.error = URLError(.badURL)
+        sut.showErrorAlert = true
+        
+        XCTAssertNotNil(sut.error)
+        XCTAssertTrue(sut.showErrorAlert)
+        
+        sut.handle(.resetError)
+        
+        XCTAssertNil(sut.error)
+        XCTAssertFalse(sut.showErrorAlert)
     }
 }
