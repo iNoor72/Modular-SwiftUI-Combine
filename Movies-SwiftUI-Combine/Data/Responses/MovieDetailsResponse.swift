@@ -51,14 +51,18 @@ public struct MovieDetailsResponse: Codable {
         entity.status = status
         entity.runtime = Int16(runtime ?? 0)
         
-        genres?.forEach {
-            let model = $0.toGenreModel(context: context)
-            entity.addToGenres(model)
+        if let genres {
+            genres.forEach {
+                let model = $0.toGenreModel(context: context)
+                entity.addToGenres(model)
+            }
         }
         
-        spokenLanguages?.forEach {
-            let model = $0.toSpokenLanguageModel(context: context)
-            entity.addToSpokenLanguages(model)
+        if let spokenLanguages {
+            spokenLanguages.forEach {
+                let model = $0.toSpokenLanguageModel(context: context)
+                entity.addToSpokenLanguages(model)
+            }
         }
         
         return entity

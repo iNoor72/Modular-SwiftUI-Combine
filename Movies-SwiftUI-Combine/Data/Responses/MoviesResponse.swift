@@ -23,9 +23,11 @@ public struct MoviesResponse: Codable {
     func toMoviesResponseModel(context: NSManagedObjectContext) -> MoviesResponseModel {
         let model = MoviesResponseModel(context: context)
         model.totalPages = Int32(totalPages ?? 0)
-        let movieModels = results?.map { $0.toMovieModel(context: context)} ?? []
-        movieModels.forEach {
-            model.addToMovies($0)
+        if let results {
+            let movieModels = results.compactMap { $0.toMovieModel(context: context)}
+            movieModels.forEach {
+                model.addToMovies($0)
+            }
         }
         
         return model

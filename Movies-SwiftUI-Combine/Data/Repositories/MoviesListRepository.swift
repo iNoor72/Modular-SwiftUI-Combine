@@ -23,15 +23,16 @@ final class MoviesListRepository: MoviesListRepositoryProtocol {
         do {
             let endpoint = MoviesEndpoint.trending(page: page, genreIDs: genreIDs)
             return try network.fetch(endpoint: endpoint, expectedType: MoviesResponse.self)
-                .map { [weak self] in
+                .compactMap { [weak self] in
                     guard let self else { return nil }
                     
                     let response = $0.toMoviesResponseModel(context: self.cache.managedObjectContext)
                     
                     //We need to cache movies only
-                    let movies = response.movies?.allObjects as? [MovieModel]
-                    movies?.forEach { movie in
-                        self.cache.addObject(movie.movieID ?? "", movie, MovieModel.self)
+                    if let movies = response.movies?.allObjects as? [MovieModel] {
+                        movies.forEach { movie in
+                            self.cache.addObject(movie.movieID ?? "", movie, MovieModel.self)
+                        }
                     }
                     
                     return response

@@ -23,7 +23,7 @@ final class MovieDetailsRepository: MovieDetailsRepositoryProtocol {
         do {
             let endpoint = MovieDetailsEndpoint.movieDetails(id: movieId)
             return try network.fetch(endpoint: endpoint, expectedType: MovieDetailsResponse.self)
-                .map { [weak self] in
+                .compactMap { [weak self] in
                     guard let self else { return nil }
                     
                     let response = $0.toMovieDetailsModel(context: cache.managedObjectContext)

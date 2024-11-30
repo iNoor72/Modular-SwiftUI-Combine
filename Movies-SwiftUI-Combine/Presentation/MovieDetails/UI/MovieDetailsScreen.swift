@@ -71,7 +71,7 @@ extension MovieDetailsScreen {
                             .bold()
                             .font(.title3)
                         
-                        Text(viewModel.movieDetails.genres.map { $0.name }.joined(separator: ", "))
+                        Text(viewModel.movieDetails.genres.compactMap { $0.name }.joined(separator: ", "))
                     }
                     .padding(.horizontal, 8)
                 }
@@ -135,7 +135,7 @@ extension MovieDetailsScreen {
                     Text("Languages:")
                         .bold()
                     
-                    let spokenLanguages = viewModel.movieDetails.spokenLanguages?.map { $0.name }.joined(separator: ", ") ?? "N/A"
+                    let spokenLanguages = viewModel.movieDetails.spokenLanguages?.compactMap { $0.name }.joined(separator: ", ") ?? "N/A"
                     Text(spokenLanguages.isEmpty ? "N/A" : spokenLanguages)
                 }
             }

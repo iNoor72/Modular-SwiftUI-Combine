@@ -23,7 +23,7 @@ final class SearchRepository: SearchRepositoryProtocol {
         do {
             let endpoint = SearchEndpoint.search(page: page, query: query)
             return try network.fetch(endpoint: endpoint, expectedType: MoviesResponse.self)
-                .map { [weak self] in
+                .compactMap { [weak self] in
                     guard let self else { return nil }
                     
                     let response = $0.toMoviesResponseModel(context: cache.managedObjectContext)

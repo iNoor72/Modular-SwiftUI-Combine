@@ -58,8 +58,8 @@ extension MovieDetailsUseCaseImpl {
             return nil
         }
         
-        let spokenLanguagesViewItems = spokenLanguages.map(toSpokenLanguageViewItem)
-        let genresViewItems = genres.map(toGenreViewItem)
+        let spokenLanguagesViewItems = spokenLanguages.compactMap(toSpokenLanguageViewItem)
+        let genresViewItems = genres.compactMap(toGenreViewItem)
         
         return MovieDetailsViewItem(
             uuid: movieDetails.uuid ?? UUID(),

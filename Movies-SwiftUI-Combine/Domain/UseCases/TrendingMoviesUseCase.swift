@@ -45,14 +45,14 @@ public final class TrendingMoviesUseCaseImpl: TrendingMoviesUseCase {
 
     public func getCachedMovies() -> [MovieViewItem] {
         moviesListRepository.getCachedMovies()
-            .map { toMovieViewItem($0) }
+            .compactMap { toMovieViewItem($0) }
     }
 }
 
 extension TrendingMoviesUseCaseImpl {
     private func toMoviesResponseViewItem(_ response: MoviesResponseModel) -> MoviesResponseViewItem? {
         guard let movies = response.movies?.allObjects as? [MovieModel] else { return nil }
-        let movieItems = movies.map(toMovieViewItem)
+        let movieItems = movies.compactMap(toMovieViewItem)
         
         return MoviesResponseViewItem(totalPages: Int(response.totalPages), movies: movieItems)
     }

@@ -139,6 +139,7 @@ final class MoviesListViewModel: ObservableObject {
         }
         
         isNetworkConnectionLost = false
+        movies = []
         state = .initial
         handle(.loadData)
     }

@@ -22,7 +22,7 @@ final class GenresRepository: GenresRepositoryProtocol {
             return try network
                 .fetch(endpoint: endpoint, expectedType: GenresResponse.self)
                 .map {
-                    let viewItems = $0.genres?.map { $0.toGenreViewItem() } ?? []
+                    let viewItems = $0.genres?.compactMap { $0.toGenreViewItem() } ?? []
                     return viewItems
                 }
                 .eraseToAnyPublisher()
