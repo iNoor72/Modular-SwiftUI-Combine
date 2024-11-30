@@ -113,7 +113,6 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func handleMoviesOfflineFetching() {
-        guard state != .offline else { return }
         let movies = dependencies.trendingMoviesUseCase.getCachedMovies()
         
         guard !movies.isEmpty else {
@@ -135,6 +134,7 @@ final class MoviesListViewModel: ObservableObject {
         guard isConnected else {
             state = .offline
             isNetworkConnectionLost = true
+            handleMoviesOfflineFetching()
             return
         }
         
@@ -193,6 +193,7 @@ final class MoviesListViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: {[weak self] completion in
                 guard let self else { return }
+                self.isLoading = false
                 
                 switch completion {
                 case .finished:
@@ -221,6 +222,7 @@ final class MoviesListViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: {[weak self] completion in
                 guard let self else { return }
+                self.isLoading = false
                 
                 switch completion {
                 case .finished:
@@ -262,6 +264,7 @@ final class MoviesListViewModel: ObservableObject {
             .throttle(for: 3.0, scheduler: RunLoop.main, latest: true)
             .sink {[weak self] completion in
                 guard let self else { return }
+                self.isLoading = false
                 
                 switch completion {
                 case .finished:
