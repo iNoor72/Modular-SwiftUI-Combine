@@ -14,6 +14,7 @@ struct MovieDetailsScreen: View {
         ZStack(alignment: .bottom) {
             mainView
         }
+        .ignoresSafeArea()
         .background(.black)
         .alert(isPresented: $viewModel.isNetworkConnectionLost) {
             Alert(title: Text("Error"), message: Text(AppStrings.noNetworkAlertMessage), primaryButton: .default(Text("Retry"), action: {
@@ -41,7 +42,6 @@ struct MovieDetailsScreen: View {
             RetryView {
                 viewModel.handle(.loadData)
             }
-        case .success:
         case .success, .offline:
             contentView
         }
@@ -59,17 +59,13 @@ extension MovieDetailsScreen {
     private var movieDetailsView: some View {
         ScrollView(.vertical) {
             LazyVStack(alignment: .leading) {
-                image(path: viewModel.movieDetails?.backdropPath ?? "")
                 image(path: viewModel.movieDetails.backdropPath)
                     .frame(width: UIScreen.width, height: UIScreen.height / 3)
                 
                 HStack(spacing: 4) {
-                    image(path: viewModel.movieDetails?.posterPath ?? "")
                     image(path: viewModel.movieDetails.posterPath)
                         .frame(width: 100, height: 200)
                     
-                    LazyVStack {
-                        Text("\(viewModel.movieDetails?.title ?? "") (\(viewModel.movieDetails?.releaseDate ?? ""))")
                     LazyVStack(alignment: .leading, spacing: 8) {
                         Text("\(viewModel.movieDetails.title) (\(viewModel.movieDetails.releaseDate))")
                             .bold()
@@ -82,7 +78,6 @@ extension MovieDetailsScreen {
                 .padding(.horizontal, 16)
                 
                 LazyVStack(alignment: .leading, spacing: 16) {
-                    Text(viewModel.movieDetails?.overview ?? "")
                     Text(viewModel.movieDetails.overview)
                         .lineLimit(nil)
                     
@@ -90,7 +85,6 @@ extension MovieDetailsScreen {
                     
                     movieInfoView
                 }
-                .padding(.horizontal, 16)
                 .padding(.horizontal, 2)
             }
         }
@@ -122,11 +116,6 @@ extension MovieDetailsScreen {
     }
     
     private var movieInfoView: some View {
-        LazyVStack(alignment: .leading, spacing: 4) {
-            LazyHStack {
-                Text("Homepage:")
-                    .bold()
-                    .foregroundStyle(.white)
         let columns: [GridItem] = [
             GridItem(.flexible()),
             GridItem(.flexible())
@@ -142,7 +131,6 @@ extension MovieDetailsScreen {
                     Text(LocalizedStringKey(homepage.isEmpty ? "N/A" : homepage))
                 }
                 
-                Text(viewModel.movieDetails?.homepage ?? "")
                 HStack {
                     Text("Languages:")
                         .bold()
@@ -152,10 +140,6 @@ extension MovieDetailsScreen {
                 }
             }
             
-            LazyHStack {
-                Text("Languages:")
-                    .bold()
-                    .foregroundStyle(.white)
             LazyVGrid(columns: columns, alignment: .leading, spacing: 0) {
                 HStack {
                     Text("Status:")
@@ -166,8 +150,6 @@ extension MovieDetailsScreen {
                         .lineLimit(0)
                 }
                 
-                Text(viewModel.movieDetails?.spokenLanguages?.map { $0.name }.joined(separator: ", ") ?? "")
-                    .lineLimit(3)
                 HStack {
                     Text("Runtime:")
                         .bold()
