@@ -24,7 +24,7 @@ final class MoviesListRouterTests: XCTestCase {
     }
     
     func test_navigateToDetails() {
-        sut.navigate(to: .movieDetails(MovieViewItem(id: 1, uuid: UUID(), title: "", releaseDate: "", posterPath: nil)))
+        sut.navigate(to: .movieDetails(MovieViewItem(id: 1.toString, uuid: UUID(), title: "", releaseDate: "", posterPath: nil)))
         
         XCTAssertNil(sut.viewController)
     }

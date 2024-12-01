@@ -12,6 +12,10 @@ import Combine
 @testable import Movies_SwiftUI_Combine
 
 final class MockMovieDetailsRepository: MovieDetailsRepositoryProtocol {
+    func getCachedMovieDetails(with id: String) -> CachingLayer.MovieDetailsModel? {
+        nil
+    }
+    
     func fetchMovieDetails(with movieId: Int) -> AnyPublisher<CachingLayer.MovieDetailsModel?, NetworkLayer.NetworkError> {
         return Future<MovieDetailsModel?, NetworkError> { promise in
             promise(.success(nil))

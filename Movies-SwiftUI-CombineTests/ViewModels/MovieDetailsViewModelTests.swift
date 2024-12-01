@@ -13,7 +13,7 @@ final class MovieDetailsViewModelTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        sut = MovieDetailsViewModel(movieId: 1, movieDetailsUseCase: MovieDetailsUseCaseMock())
+        sut = MovieDetailsViewModel(movieId: 1, movieDetailsUseCase: MovieDetailsUseCaseMock(), networkMonitor: MockNetworkMonitor())
     }
     
     override func tearDown() {

@@ -30,7 +30,7 @@ final class MockMovieCacheManagerTests: XCTestCase {
     }
     
     func test_addObject() {
-        sut.addObject(nil, NSManagedObject.self)
+        sut.addObject("", nil, NSManagedObject.self)
         
         XCTAssertEqual((sut as! MoviesCacheManagerMock).data.count, 1)
     }
