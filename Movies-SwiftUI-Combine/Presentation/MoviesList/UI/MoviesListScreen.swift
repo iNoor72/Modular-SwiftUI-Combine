@@ -19,6 +19,8 @@ struct MoviesListScreen: View {
             mainView
             if viewModel.isLoading {
                 ProgressView()
+                    .foregroundStyle(.white)
+                    .background(.black)
             }
         }
         .background(.black)
@@ -30,13 +32,6 @@ struct MoviesListScreen: View {
                 viewModel.handle(.retryAction)
             }), secondaryButton: .cancel())
         }
-        
-//        .alert(isPresented: $viewModel.showErrorAlert) {
-//            Alert(title: Text("Error"), message: Text(viewModel.error?.localizedDescription ?? ""), primaryButton: .default(Text("Retry"), action: {
-//                viewModel.handle(.resetError)
-//                viewModel.handle(.loadData)
-//            }), secondaryButton: .cancel())
-//        }
     }
     
     @ViewBuilder

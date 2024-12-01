@@ -58,6 +58,9 @@ extension SceneDelegate {
         let moviesListView = moviesListFactory.make()
         let navigationController = UINavigationController(rootViewController: moviesListView)
         
+        let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        navigationController.navigationBar.titleTextAttributes = textAttributes
+        
         self.window?.rootViewController = navigationController
         self.window?.makeKeyAndVisible()
     }

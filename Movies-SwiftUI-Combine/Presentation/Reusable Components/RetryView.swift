@@ -12,8 +12,6 @@ struct RetryView: View {
     var action: () -> Void
     var dismissAction: (() -> ())?
     
-    @Environment(\.dismiss) private var dismiss
-    
     // MARK: - Body
     var body: some View {
         VStack(alignment: .center, spacing: 40) {
@@ -31,24 +29,27 @@ extension RetryView {
         Image(systemName: "arrow.circlepath")
             .resizable()
             .frame(maxWidth: 200, maxHeight: 200)
+            .foregroundStyle(.white)
     }
     
     private var textView: some View {
         VStack(alignment: .center, spacing: 8) {
             title
             subTitle
-                .padding(.horizontal, 32)
         }
+        .padding(.horizontal, 16)
     }
 }
 
 extension RetryView {
     private var title: some View {
         Text("Failed to Load")
+            .foregroundStyle(.white)
     }
     
     private var subTitle: some View {
         Text("An unexpected error has occurred. You can try again by refreshing this page")
+            .foregroundStyle(.white)
             .multilineTextAlignment(.center)
     }
     
@@ -58,6 +59,8 @@ extension RetryView {
         } label: {
             HStack{
                 Text(title)
+                    .foregroundStyle(.white)
+                
                 Image(systemName: "arrow.circlepath")
             }
         }

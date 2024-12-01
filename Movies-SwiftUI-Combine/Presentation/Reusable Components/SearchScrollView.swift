@@ -42,6 +42,7 @@ extension SearchScrollView {
         Button("Cancel") {
             cancelAction?()
         }
+        .foregroundStyle(.white)
     }
     
     private var scrollView: some View {

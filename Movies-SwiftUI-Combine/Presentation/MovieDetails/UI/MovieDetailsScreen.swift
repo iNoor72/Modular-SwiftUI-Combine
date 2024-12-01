@@ -21,11 +21,6 @@ struct MovieDetailsScreen: View {
                 viewModel.handle(.retryAction)
             }), secondaryButton: .cancel())
         }
-        .alert(isPresented: $viewModel.showErrorAlert) {
-            Alert(title: Text("Error"), message: Text(viewModel.error?.localizedDescription ?? ""), primaryButton: .default(Text("Retry"), action: {
-                viewModel.handle(.resetError)
-            }), secondaryButton: .cancel())
-        }
     }
     
     @ViewBuilder
@@ -38,6 +33,7 @@ struct MovieDetailsScreen: View {
                 }
         case .loading:
             ProgressView()
+                .tint(.white)
         case .failure(_):
             RetryView {
                 viewModel.handle(.loadData)
@@ -68,10 +64,12 @@ extension MovieDetailsScreen {
                     
                     LazyVStack(alignment: .leading, spacing: 8) {
                         Text("\(viewModel.movieDetails.title) (\(viewModel.movieDetails.releaseDate))")
+                            .foregroundStyle(.white)
                             .bold()
                             .font(.title3)
                         
                         Text(viewModel.movieDetails.genres.compactMap { $0.name }.joined(separator: ", "))
+                            .foregroundStyle(.white)
                     }
                     .padding(.horizontal, 8)
                 }
@@ -79,6 +77,7 @@ extension MovieDetailsScreen {
                 
                 LazyVStack(alignment: .leading, spacing: 16) {
                     Text(viewModel.movieDetails.overview)
+                        .foregroundStyle(.white)
                         .lineLimit(nil)
                     
                     Spacer()
@@ -103,14 +102,12 @@ extension MovieDetailsScreen {
                 image
                     .resizable()
                     .scaledToFit()
-                    .cornerRadius(8.0)
                 
                 //Including error state
             default:
                 Image(AppConstants.imagePlaceholderName)
                     .resizable()
                     .scaledToFit()
-                    .cornerRadius(8.0)
             }
         })
     }
@@ -125,6 +122,7 @@ extension MovieDetailsScreen {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text("Homepage:")
+                        .foregroundStyle(.white)
                         .bold()
 
                     let homepage = viewModel.movieDetails.homepage
@@ -133,44 +131,54 @@ extension MovieDetailsScreen {
                 
                 HStack {
                     Text("Languages:")
+                        .foregroundStyle(.white)
                         .bold()
                     
                     let spokenLanguages = viewModel.movieDetails.spokenLanguages?.compactMap { $0.name }.joined(separator: ", ") ?? "N/A"
                     Text(spokenLanguages.isEmpty ? "N/A" : spokenLanguages)
+                        .foregroundStyle(.white)
                 }
             }
             
             LazyVGrid(columns: columns, alignment: .leading, spacing: 0) {
                 HStack {
                     Text("Status:")
+                        .foregroundStyle(.white)
                         .bold()
                     
                     let status = viewModel.movieDetails.status
                     Text(status.isEmpty ? "N/A" : status)
+                        .foregroundStyle(.white)
                         .lineLimit(0)
                 }
                 
                 HStack {
                     Text("Runtime:")
+                        .foregroundStyle(.white)
                         .bold()
                     
                     Text("\(viewModel.movieDetails.runtime) minutes")
+                        .foregroundStyle(.white)
                         .lineLimit(0)
                 }
                 
                 HStack {
                     Text("Budget:")
                         .bold()
+                        .foregroundStyle(.white)
                     
                     Text("\(viewModel.movieDetails.budget) $")
+                        .foregroundStyle(.white)
                         .lineLimit(0)
                 }
                 
                 HStack {
                     Text("Revenue:")
+                        .foregroundStyle(.white)
                         .bold()
                     
                     Text("\(viewModel.movieDetails.revenue) $")
+                        .foregroundStyle(.white)
                         .lineLimit(nil)
                 }
             }

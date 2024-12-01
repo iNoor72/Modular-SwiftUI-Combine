@@ -13,6 +13,7 @@ struct GenresFilterItem: View {
     
     var body: some View {
         Text(genre.name)
+            .foregroundStyle(.white)
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
             .background {

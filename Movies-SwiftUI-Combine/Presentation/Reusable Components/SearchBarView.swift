@@ -22,6 +22,7 @@ struct SearchBarView: View {
             searchIcon
             searchTextField
         }
+        .foregroundStyle(.white)
         .padding(8)
         .overlay(
             RoundedRectangle(cornerRadius: Constants.cornerRadius)
@@ -31,10 +32,14 @@ struct SearchBarView: View {
     
     private var searchIcon: some View {
         Image(systemName: Constants.searchBarIcon)
-            .tint(.black)
+            .foregroundStyle(.white)
     }
     
     private var searchTextField: some View {
-        TextField("Search ...", text: $query)
+        TextField(
+            "",
+            text: $query,
+            prompt: Text("Search ...").foregroundColor(.init(white: 1, opacity: 0.4))
+        )
     }
 }

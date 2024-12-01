@@ -11,7 +11,6 @@ import Combine
 enum MoviesDetailsEvents {
     case loadData
     case retryAction
-    case resetError
     case networkChanged(Bool)
 }
 
@@ -27,8 +26,6 @@ final class MovieDetailsViewModel: ObservableObject {
     @Published var state: MovieDetailsScreenState = .initial
     @Published var movieDetails: MovieDetailsViewItem!
     @Published var isNetworkConnectionLost = false
-    @Published var showErrorAlert = false
-    var error: Error?
     
     private let networkMonitor: NetworkMonitorProtocol
     private let movieDetailsUseCase: MovieDetailsUseCase
@@ -50,8 +47,6 @@ final class MovieDetailsViewModel: ObservableObject {
             handleNetworkChanging(isConnected)
         case .retryAction:
             didTapRetry()
-        case .resetError:
-            resetErrors()
         }
     }
     
@@ -83,7 +78,7 @@ final class MovieDetailsViewModel: ObservableObject {
             return
         }
         
-        isNetworkConnectionLost = true
+        isNetworkConnectionLost = false
         state = .loading
         
         movieDetailsUseCase.execute(with: movieId)
@@ -119,7 +114,8 @@ final class MovieDetailsViewModel: ObservableObject {
     }
     
     private func isConnectedToNetwork() -> Bool {
-        !isNetworkConnectionLost
+        if isNetworkConnectionLost { state = .offline }
+        return !isNetworkConnectionLost
     }
     
     private func handleMovieDetailsOfflineFetching() {
@@ -137,11 +133,5 @@ final class MovieDetailsViewModel: ObservableObject {
     private func didTapRetry() {
         state = .initial
         handle(.loadData)
-    }
-    
-    private func resetErrors() {
-        error = nil
-        showErrorAlert = false
-        didTapRetry()
     }
 }

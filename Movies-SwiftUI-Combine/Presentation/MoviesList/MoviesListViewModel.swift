@@ -131,9 +131,6 @@ final class MoviesListViewModel: ObservableObject {
     }
     
     private func handleNetworkChanging(_ isConnected: Bool) {
-        movies = []
-        state = .initial
-        
         guard isConnected else {
             state = .offline
             isNetworkConnectionLost = true
@@ -141,6 +138,12 @@ final class MoviesListViewModel: ObservableObject {
             return
         }
         
+        guard state == .success || state == .offline else {
+            return
+        }
+        
+        movies = []
+        state = .initial
         isNetworkConnectionLost = false
         handle(.loadData)
     }

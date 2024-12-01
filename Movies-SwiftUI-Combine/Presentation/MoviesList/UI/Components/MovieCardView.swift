@@ -17,6 +17,7 @@ struct MovieCardView: View {
                     switch phase {
                     case .empty:
                         ProgressView()
+                            .foregroundStyle(.white)
                         
                     case .success(let image):
                         image
@@ -35,10 +36,12 @@ struct MovieCardView: View {
                 .frame(height: 250)
                 
                 Text(movieItem.title)
+                    .foregroundStyle(.white)
                     .bold()
                     .padding(.leading, 4)
                 
                 Text(movieItem.releaseDate)
+                    .foregroundStyle(.white)
                     .padding(.leading, 4)
             }
         }
