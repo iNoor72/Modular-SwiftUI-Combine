@@ -44,6 +44,7 @@ final class MoviesListFactory: MoviesListFactoryProtocol {
         let hostingViewController = UIHostingController(rootView: usersListView)
         
         hostingViewController.navigationItem.title = "Movies"
+        hostingViewController.view.backgroundColor = .black
         
         router.viewController = hostingViewController
         

@@ -28,6 +28,7 @@ final class MovieDetailsFactory: MovieDetailsFactoryProtocol {
         let movieDetailsView = MovieDetailsScreen(viewModel: movieDetailsViewModel)
         
         let hostingViewController = UIHostingController(rootView: movieDetailsView)
+        hostingViewController.view.backgroundColor = .black
         
         router.viewController = hostingViewController
         
