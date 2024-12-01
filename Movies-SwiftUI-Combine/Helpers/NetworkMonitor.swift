@@ -21,13 +21,15 @@ public final class NetworkMonitor: @unchecked Sendable, NetworkMonitorProtocol {
     public let isConnectedPublisher = CurrentValueSubject<Bool, Never>(true)
     
     private init() {
-        reachability.whenReachable = { [weak self] _ in
+        reachability.whenReachable = { [weak self] reachability in
             guard let self else { return }
+            print("Reachable: \(reachability)")
             isConnectedPublisher.send(true)
         }
         
         reachability.whenUnreachable = { [weak self] _ in
             guard let self else { return }
+            print("Unreachable")
             isConnectedPublisher.send(false)
         }
     }
